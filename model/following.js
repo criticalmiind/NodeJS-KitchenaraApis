@@ -1,6 +1,6 @@
 const db = require("../config/database");
 
-module.exports = class Users {
+module.exports = class Following {
   constructor() { }
 
   is_following(userId, followerId) {

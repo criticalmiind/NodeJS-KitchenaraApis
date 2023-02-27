@@ -13,8 +13,10 @@ router.get("/checkUsername/:username", userController.checkUserName);
 router.get("/checkPhoneNumber/:number", userController.checkPhoneNumber);
 router.post("/singUp", [validate.signUp], userController.signUp);
 router.post("/login", userController.userLogin);
+router.post("/forgot/password", userController.forgotPassword);
 
 router.get("/checkSession", auth, userController.authentication);
+router.post("/verify/otp", auth, userController.verifyOtp);
 router.post("/update/profile", auth, uploadPhoto, userController.updateProfile);
 router.get("/profile/by/id/:userId", userController.getUserProfileById);
 

@@ -102,14 +102,39 @@ const signUp = async (req, res, next) => {
   payload.password = await bcrypt.hash(payload.password, salt);
   if (payload.phoneNumber && payload.password) {
     try {
-      const result = await user.singUp(payload);
-      if (result) {
-        return res.status(202).json({ message: " Registered Successfully" });
+      payload['otp'] = Math.floor(1000 + Math.random() * 9000);
+      const d = await user.singUp(payload);
+      if (d) {
+        const [result] = await user.userProfileById(payload.phoneNumber);
+        let data1 = {
+          userId: result[0].userId,
+          username: result[0].username,
+          email: result[0].email,
+          fullName: result[0].fullName,
+          phoneNumber: result[0].phoneNumber,
+          profilePic: result[0].profilePic,
+          bio: result[0].bio,
+          userType: result[0].userType,
+          location: result[0].location,
+          storeAddress: result[0].storeAddress,
+          status: result[0].status,
+        }
+        jwt.sign(
+          { data1 },
+          "secretKey",
+          { expiresIn: "1d" },
+          (err, token) => {
+            if (err) {
+              return res.status(401).json({ "message": err });
+            }
+            return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!" });
+          }
+        );
       } else {
         return next({ code: 404, message: "no data found" });
       }
     } catch (error) {
-      return next({ code: 401, message: error });
+      return next({ code: 401, message: error+"" });
     }
   } else {
     return next({ code: 400, message: "No Request Found" });
@@ -127,17 +152,12 @@ const updateProfile = async (req, res, next) => {
         profilePic
         bio
         userType
-        location
+        location,
+        storeAddress
      */
   let payload = req.body;
 
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return next({ code: 401, message: errors });
-  }
-
-  if (payload.password){
+  if (payload.password) {
     const salt = await bcrypt.genSalt(10);
     payload.password = await bcrypt.hash(payload.password, salt);
   }
@@ -179,9 +199,9 @@ const logIn = async (req, res, next) => {
             bio: rowsData.bio,
             userType: rowsData.userType,
             location: rowsData.location,
+            storeAddress: rowsData.storeAddress,
             status: rowsData.status,
           };
-
           jwt.sign(
             { data1 },
             "secretKey",
@@ -190,12 +210,12 @@ const logIn = async (req, res, next) => {
               if (err) {
                 return res.status(401).json({ message: err });
               }
-              return res.status(201).json({ userInfo: data1, token: token });
+              return res.status(201).json({ "userInfo": data1, token: token });
             }
           );
         });
       } else {
-        return next({ code: 404, message: "Invalid Email or Password" });
+        return next({ code: 401, message: "Invalid Email or Password" });
       }
     } catch (err) {
       return next({ code: 401, message: err });
@@ -224,10 +244,11 @@ const authentication = async (req, res, next) => {
             bio: rowsData.bio,
             userType: rowsData.userType,
             location: rowsData.location,
+            storeAddress: rowsData.storeAddress,
             status: rowsData.status,
           };
 
-          return res.status(202).json({ status: true, userInfo: data1 });
+          return res.status(202).json({ status: true, "userInfo": data1 });
         });
       } else {
         return next({ status: false, code: 401, message: "Invalid Email or Password" });
@@ -326,7 +347,7 @@ const likeUnlikeFoodPost = async (req, res, next) => {
 
   try {
     const [result] = await likeditems.is_already_liked(userId, foodId);
-    if (result.length<1) {
+    if (result.length < 1) {
       await likeditems.like(userId, foodId);
       return res.status(200).json({ message: "video Liked" });
     } else {
@@ -338,11 +359,72 @@ const likeUnlikeFoodPost = async (req, res, next) => {
   }
 };
 
+const forgotPassword = async (req, res, next) => {
+  /**
+     * @dev the payload will contain following properties:
+     * - `userId`
+     */
+  try {
+    let otp = Math.floor(1000 + Math.random() * 9000);
+    let d = await user.updateOtp(req.body.userId, otp);
+    if (d) {
+      const [result] = await user.userProfileById(req.body.userId);
+      let data1 = {
+        userId: result[0].userId,
+        username: result[0].username,
+        email: result[0].email,
+        fullName: result[0].fullName,
+        phoneNumber: result[0].phoneNumber,
+        profilePic: result[0].profilePic,
+        bio: result[0].bio,
+        userType: result[0].userType,
+        location: result[0].location,
+        storeAddress: result[0].storeAddress,
+        status: result[0].status,
+      }
+      jwt.sign(
+        { data1 },
+        "secretKey",
+        { expiresIn: "1d" },
+        (err, token) => {
+          if (err) {
+            return res.status(401).json({ "message": err });
+          }
+          return res.status(200).json({ "token": token, "message": "Otp sent successfully!" });
+        }
+      );
+    } else {
+      return res.status(401).json({ message: "Invalid Request!" });
+    }
+  } catch (error) {
+    return next({ code: 401, message: error+"" });
+  }
+}
+
+const verifyOtp = async (req, res, next) => {
+  /**
+     * @dev the payload will contain following properties:
+     * - `otp`
+     */
+  try {
+    let [result] = await user.verifyOtp(req.data.data1.userId, req.body.otp);
+    if (result.length > 0) {
+      await user.updateProfileStatus(req.data.data1.userId, 1)
+      return res.status(200).json({ message: "Otp Verified!", "userInfo":req.data.data1 });
+    } else {
+      return res.status(401).json({ message: "Inavlid Otp! Please try again!" });
+    }
+  } catch (error) {
+    return next({ code: 401, message: error+"" });
+  }
+}
 
 module.exports = {
   "userLogin": logIn,
   "authentication": authentication,
   "signUp": signUp,
+  "forgotPassword":forgotPassword,
+  "verifyOtp": verifyOtp,
   "updateProfile": updateProfile,
   "checkUserName": checkUserName,
   "checkEmail": checkEmail,

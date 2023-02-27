@@ -19,20 +19,34 @@ module.exports = class Users {
     return db.execute(`SELECT * FROM  users where email = '${email}' `);
   }
 
-  singUp({ username, phoneNumber, password, email }) {
-    return db.execute(`INSERT INTO users SET username = '${username}', phoneNumber = '${phoneNumber}', password = '${password}',userType = '${userType ? userType : 'mobileUser'}',`);
+  singUp({ username, phoneNumber, password, otp, userType, email }) {
+    return db.execute(`INSERT INTO users SET username = '${username}', phoneNumber = '${phoneNumber}', password = '${password}', otp = ${otp}, userType = '${userType ? userType : 'user'}', status=0`);
   }
 
-  updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location }, userId) {
+  updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location, storeAddress }, userId) {
     let query = `UPDATE users SET `;
-    if(fullName) query += `fullName='${fullName}', `
-    if(password) query += `password='${password}', `
-    if(profilePic) query += `profilePic='${profilePic}', `
-    if(bio) query += `bio='${bio}', `
-    if(location) query += `location='${location}', `
+    if (email) query += `email='${email}', `
+    if (fullName) query += `fullName='${fullName}', `
+    if (password) query += `password='${password}', `
+    if (profilePic) query += `profilePic='${profilePic}', `
+    if (bio) query += `bio='${bio}', `
+    if (location) query += `location='${location}', `
+    if (storeAddress) query += `storeAddress='${storeAddress}', `
     query += `status=1 WHERE userId=${userId}`
-
     return db.execute(query);
+  }
+
+  updateOtp(userId, otp) {
+    return db.execute(`UPDATE users SET otp = ${otp} WHERE phoneNumber=${userId} OR email=${userId} OR userId=${userId}`);
+  }
+
+  verifyOtp(userId, otp) {
+    console.log
+    return db.execute(`SELECT * FROM users WHERE otp = ${otp} AND (phoneNumber=${userId} OR email=${userId} OR userId=${userId})`);
+  }
+
+  updateProfileStatus(userId, status) {
+    return db.execute(`UPDATE users SET status = ${status}, otp = '' WHERE phoneNumber=${userId} OR email=${userId} OR userId=${userId}`);
   }
 
   uploadVideo({ userId, videoDescription, location, commentsAllowed }, video) {
@@ -51,7 +65,7 @@ module.exports = class Users {
           LEFT JOIN following f2 ON u.userId = f2.followerId -- To count the number of users following this user
           LEFT JOIN foodposts fp ON u.userId = fp.userId -- To count the number of videos this user
       WHERE 
-          u.userId = ${userId}
+          u.userId = ${userId} OR u.email = ${userId} OR u.phoneNumber = ${userId}
       GROUP BY 
           u.userId;`);
   }

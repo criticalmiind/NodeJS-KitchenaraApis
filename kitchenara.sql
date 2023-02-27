@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2023 at 08:34 AM
+-- Generation Time: Feb 27, 2023 at 08:43 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.0.25
 
@@ -24,6 +24,30 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `catId` int(11) NOT NULL,
+  `userId` varchar(11) NOT NULL,
+  `catName` varchar(56) NOT NULL,
+  `catDescription` text DEFAULT NULL,
+  `catImage` text DEFAULT NULL,
+  `created_dt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_dt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`catId`, `userId`, `catName`, `catDescription`, `catImage`, `created_dt`, `updated_dt`) VALUES
+(1, '1', 'Pizza', NULL, NULL, '2023-02-27 13:27:39', '2023-02-27 15:55:32'),
+(2, '1', 'Burger', NULL, NULL, '2023-02-27 15:55:14', '2023-02-27 15:55:14');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `comments`
 --
 
@@ -33,9 +57,15 @@ CREATE TABLE `comments` (
   `foodId` int(11) NOT NULL,
   `comment` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
-  `likesCount` int(11) DEFAULT 0,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`commentId`, `userId`, `foodId`, `comment`, `status`, `createdAt`) VALUES
+(1, 1, 14, 'Nice Video!!! Great!!!', 1, '2023-02-27 16:27:12');
 
 -- --------------------------------------------------------
 
@@ -63,6 +93,34 @@ CREATE TABLE `following` (
   `followerId` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `following`
+--
+
+INSERT INTO `following` (`followId`, `userId`, `followerId`, `status`, `createdAt`) VALUES
+(2, 1, 1, 1, '2023-02-27 17:19:40');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fooditems`
+--
+
+CREATE TABLE `fooditems` (
+  `foodId` int(11) NOT NULL,
+  `storeId` varchar(11) NOT NULL,
+  `userId` varchar(11) NOT NULL,
+  `foodName` varchar(100) NOT NULL,
+  `foodTags` text NOT NULL,
+  `foodDescription` text NOT NULL,
+  `foodPrice` int(11) NOT NULL,
+  `foodQty` int(11) NOT NULL,
+  `foodStatus` varchar(11) NOT NULL,
+  `foodDeleted` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -108,7 +166,7 @@ CREATE TABLE `likeditems` (
 --
 
 INSERT INTO `likeditems` (`likesId`, `userId`, `foodId`, `status`, `createdAt`) VALUES
-(1, 1, 14, 1, '2023-02-26 23:19:11');
+(6, 1, 14, 1, '2023-02-27 16:24:49');
 
 -- --------------------------------------------------------
 
@@ -190,9 +248,11 @@ CREATE TABLE `users` (
   `password` text NOT NULL,
   `profilePic` varchar(255) DEFAULT NULL,
   `bio` varchar(255) DEFAULT NULL,
-  `userType` varchar(255) DEFAULT NULL,
+  `userType` enum('user','store','superuser') NOT NULL DEFAULT 'user',
   `location` varchar(255) DEFAULT NULL,
+  `storeAddress` text NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
+  `otp` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -200,12 +260,19 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userId`, `username`, `fullName`, `email`, `phoneNumber`, `password`, `profilePic`, `bio`, `userType`, `location`, `status`, `createdAt`) VALUES
-(1, 'admin', 'Admin 123', 'admin@admin.com', '+923049758182', '$2b$10$8bUNfqiaGCXuIcXwllrgIOcFaSY5ym.RkhfIj06KC6IEDwWYimiQm', 'http://127.0.0.1:8000/get/photo/1677441162148.png', 'Bio', NULL, '123456,12345', 1, '2023-02-26 13:33:31');
+INSERT INTO `users` (`userId`, `username`, `fullName`, `email`, `phoneNumber`, `password`, `profilePic`, `bio`, `userType`, `location`, `storeAddress`, `status`, `otp`, `createdAt`) VALUES
+(1, 'admin', 'Admin 123', 'admin@admin.com', '+923049758182', '$2b$10$8bUNfqiaGCXuIcXwllrgIOcFaSY5ym.RkhfIj06KC6IEDwWYimiQm', 'http://127.0.0.1:8000/get/photo/1677441162148.png', 'Bio', 'user', '123456,12345', '', 1, NULL, '2023-02-26 13:33:31'),
+(8, 'user1', NULL, NULL, '+923049758181', '$2b$10$UZ9sAtW6hNLdE7fQp7I6Ae6Qpm0eF03v4lqjNoJLo6UfN1DZWNY7q', NULL, NULL, 'user', NULL, '', 1, 0, '2023-02-28 00:06:09');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`catId`);
 
 --
 -- Indexes for table `comments`
@@ -260,22 +327,28 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `catId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `commentId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `commentsliked`
 --
 ALTER TABLE `commentsliked`
-  MODIFY `cLikedId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cLikedId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `following`
 --
 ALTER TABLE `following`
-  MODIFY `followId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `followId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `foodposts`
@@ -287,7 +360,7 @@ ALTER TABLE `foodposts`
 -- AUTO_INCREMENT for table `likeditems`
 --
 ALTER TABLE `likeditems`
-  MODIFY `likesId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `likesId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `orderdetails`
@@ -305,7 +378,7 @@ ALTER TABLE `usercart`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,6 +1,6 @@
 const db = require("../config/database");
 
-module.exports = class Users {
+module.exports = class likeditems {
   constructor() { }
 
   is_already_liked(userId, foodId) {
