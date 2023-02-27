@@ -1,4 +1,4 @@
 node_modules/
-assets/videos
-assets/foodVideos
-assets/Photos
+assets/videos/*
+assets/foodVideos/*
+assets/Photos/*
