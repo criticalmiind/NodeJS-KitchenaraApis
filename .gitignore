@@ -1,6 +1,6 @@
 node_modules/
-*/videos/*
-*/foodVideos/*
-*/Photos/*
+# */videos/*
+# */foodVideos/*
+# */Photos/*
 # */Photos
 # */Photos
