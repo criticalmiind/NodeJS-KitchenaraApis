@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const users = require("./routes/users");
+const files = require("./routes/files");
 const morgan = require("morgan");
 const path = require("path");
 app.use(express.static(__dirname));
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/api/users", users);
+app.use("/get", files);
 
 app.get("/", (req, res) => {
   res.write("<h1>welcome</h1>");

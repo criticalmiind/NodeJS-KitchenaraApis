@@ -6,11 +6,11 @@ module.exports = class Users {
   checkUsername(username) {
     return db.execute(`SELECT * FROM  users WHERE username = '${username}'`);
   }
-  
+
   checkEmail(email) {
     return db.execute(`SELECT * FROM  users WHERE email = '${email}'`);
   }
-  
+
   CheckPhoneNumber(phoneNumber) {
     return db.execute(`SELECT * FROM  users WHERE phoneNumber = '${phoneNumber}'`);
   }
@@ -23,15 +23,50 @@ module.exports = class Users {
     return db.execute(`INSERT INTO users SET username = '${username}', phoneNumber = '${phoneNumber}', password = '${password}',userType = '${userType ? userType : 'mobileUser'}',`);
   }
 
+  
+  updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location }, userId) {
+    let query = `UPDATE users SET `;
+    if(fullName) query += `fullName='${fullName}', `
+    if(password) query += `password='${password}', `
+    if(profilePic) query += `profilePic='${profilePic}', `
+    if(bio) query += `bio='${bio}', `
+    if(location) query += `location='${location}', `
+    query += `status=1 WHERE userId=${userId}`
+
+    return db.execute(query);
+  }
+
   uploadVideo({ userId, videoDescription, location, commentsAllowed }, video) {
     return db.execute(`INSERT INTO  foodposts SET userId = ${userId}, videoDescription = '${videoDescription}',location = '${location}',commentsAllowed = ${commentsAllowed}, video = '${video}'`);
   }
-  
-  fetchALlVideos(userId, limit=10, offset=0) {
-    return db.execute(`SELECT u.*, fp.*  from users u, foodposts fp WHERE fp.userId = ${userId} ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`);
+
+  userProfileById(userId) {
+    return db.execute(`
+      SELECT u.*,
+          COUNT(DISTINCT f1.followId) AS totalFollowing,
+          COUNT(DISTINCT f2.followId) AS totalFollowers,
+          COUNT(DISTINCT fp.foodId) AS totalVideos
+      FROM 
+          users u
+          LEFT JOIN following f1 ON u.userId = f1.userId -- To count the number of users this user is following
+          LEFT JOIN following f2 ON u.userId = f2.followerId -- To count the number of users following this user
+          LEFT JOIN foodposts fp ON u.userId = fp.userId -- To count the number of videos this user
+      WHERE 
+          u.userId = ${userId}
+      GROUP BY 
+          u.userId;`);
   }
-  
-  // fetchALlVideos(limit=10, offset=0) {
-  //   return db.execute(`SELECT u.*, fp.*  from users u, foodposts fp WHERE fp.userId = u.userId ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`);
-  // }
+
+  fetchALlVideos(userId, limit = 10, offset = 0) {
+    return db.execute(`
+    SELECT u.*, fp.*, COUNT(li.likesId) AS likes, COUNT(comment.commentId) AS comments
+    FROM users u
+    INNER JOIN foodposts fp ON fp.userId = u.userId
+    LEFT JOIN likeditems li ON li.foodId = fp.foodId
+    LEFT JOIN comments comment ON comment.foodId = fp.foodId
+    WHERE fp.userId = ${userId}
+    GROUP BY fp.foodId
+    ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`)
+  }
+
 };

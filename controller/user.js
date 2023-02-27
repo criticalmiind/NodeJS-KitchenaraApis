@@ -52,6 +52,27 @@ const checkPhoneNumber = async (req, res, next) => {
   }
 };
 
+const getUserProfileById = async (req, res, next) => {
+  let userId = req.params.userId;
+
+  try {
+    const [result] = await user.userProfileById(userId);
+    if (result.length > 0) {
+      delete (result[0]['password'])
+      // delete(result[0]['phone'])
+      // delete(result[0]['email'])
+      // delete(result[0]['userType'])
+      // delete(result[0]['createdAt'])
+      // delete(result[0]['username'])
+      return res.status(200).json({ data: result[0] });
+    } else {
+      return next({ code: 401, message: "no user profile found!" });
+    }
+  } catch (error) {
+    return next({ code: 401, message: error });
+  }
+};
+
 const signUp = async (req, res, next) => {
   /**
      * @dev the payload will contain following properties:
@@ -90,6 +111,44 @@ const signUp = async (req, res, next) => {
     }
   } else {
     return next({ code: 400, message: "No Request Found" });
+  }
+};
+
+const updateProfile = async (req, res, next) => {
+  /**
+     * @dev the payload will contain following properties:
+        username
+        fullName
+        email
+        phoneNumber
+        password
+        profilePic
+        bio
+        userType
+        location
+     */
+  let payload = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next({ code: 401, message: errors });
+  }
+
+  if (payload.password){
+    const salt = await bcrypt.genSalt(10);
+    payload.password = await bcrypt.hash(payload.password, salt);
+  }
+
+  try {
+    const result = await user.updateProfile(payload, req.data.data1.userId);
+    if (result) {
+      return res.status(200).json({ message: "Profile updated successfully" });
+    } else {
+      return next({ code: 404, message: "Profile session expired!" });
+    }
+  } catch (error) {
+    return next({ code: 401, message: error });
   }
 };
 
@@ -203,6 +262,8 @@ const fetchALlVideos = async (req, res, next) => {
           profilePic: rowsData.profilePic,
           bio: rowsData.bio,
           userType: rowsData.userType,
+          likes: rowsData.likes,
+          comments: rowsData.comments,
         };
         videos.push(data);
       });
@@ -211,7 +272,7 @@ const fetchALlVideos = async (req, res, next) => {
         videos: videos,
       });
     } else {
-      return res.send({ code: 404, "d":req.data,  message: "no data found" });
+      return res.send({ code: 404, "d": req.data, message: "no data found" });
       // return next({ code: 404, "",  message: "no data found" });
     }
   } catch (error) {
@@ -228,10 +289,10 @@ const uploadVideo = async (req, res, next) => {
      * - `commentsAllowed`,
      */
 
-  if (req.body.videoBase64 == undefined) {
+  if (req.file == undefined) {
     return next({ code: 400, message: "Please upload a file!" });
   }
-  let video = req.video;
+  let video = req.file.filename;
 
   let payload = req.body;
   payload['userId'] = req.data.data1.userId
@@ -253,19 +314,15 @@ const uploadVideo = async (req, res, next) => {
   }
 };
 
-const playVideo = (req, res) => {
-  const filePath = path.join(baseUrl, 'assets', 'foodVideos', req.params.filename);
-  res.sendFile(filePath);
-}
-
 module.exports = {
-  userLogin: logIn,
-  authentication: authentication,
-  signUp: signUp,
-  checkUserName: checkUserName,
-  checkEmail: checkEmail,
-  checkPhoneNumber: checkPhoneNumber,
-  uploadVideo: uploadVideo,
-  fetchALlVideos: fetchALlVideos,
-  playVideo: playVideo
+  "userLogin": logIn,
+  "authentication": authentication,
+  "signUp": signUp,
+  "updateProfile": updateProfile,
+  "checkUserName": checkUserName,
+  "checkEmail": checkEmail,
+  "checkPhoneNumber": checkPhoneNumber,
+  "uploadVideo": uploadVideo,
+  "fetchALlVideos": fetchALlVideos,
+  "getUserProfileById": getUserProfileById
 };
