@@ -23,7 +23,6 @@ module.exports = class Users {
     return db.execute(`INSERT INTO users SET username = '${username}', phoneNumber = '${phoneNumber}', password = '${password}',userType = '${userType ? userType : 'mobileUser'}',`);
   }
 
-  
   updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location }, userId) {
     let query = `UPDATE users SET `;
     if(fullName) query += `fullName='${fullName}', `

@@ -1,11 +1,13 @@
 const jwt = require("jsonwebtoken");
 const Users = require("../model/users");
+const LikeItems = require("../model/likeditems");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const baseUrl = require("../config/baseUrl");
 
 let user = new Users();
+let likeditems = new LikeItems();
 
 const checkUserName = async (req, res, next) => {
   let username = req.params.username;
@@ -314,6 +316,29 @@ const uploadVideo = async (req, res, next) => {
   }
 };
 
+const likeUnlikeFoodPost = async (req, res, next) => {
+  /**
+     * @dev the payload will contain following properties:
+     * - `foodId`
+     */
+  let userId = req.data.data1.userId
+  let foodId = req.params.foodId;
+
+  try {
+    const [result] = await likeditems.is_already_liked(userId, foodId);
+    if (result.length<1) {
+      await likeditems.like(userId, foodId);
+      return res.status(200).json({ message: "video Liked" });
+    } else {
+      await likeditems.undo_like(userId, foodId);
+      return res.status(200).json({ message: "Video Unliked" });
+    }
+  } catch (error) {
+    return next({ code: 401, message: error });
+  }
+};
+
+
 module.exports = {
   "userLogin": logIn,
   "authentication": authentication,
@@ -324,5 +349,6 @@ module.exports = {
   "checkPhoneNumber": checkPhoneNumber,
   "uploadVideo": uploadVideo,
   "fetchALlVideos": fetchALlVideos,
-  "getUserProfileById": getUserProfileById
+  "getUserProfileById": getUserProfileById,
+  "likeUnlikeFoodPost": likeUnlikeFoodPost,
 };
