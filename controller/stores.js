@@ -19,8 +19,8 @@ const getStores = async (req, res, next) => {
 
   try {
     let payload = req.body
-    payload['lat'] = payload['latlng']?.split(",")[0]
-    payload['lng'] = payload['latlng']?.split(",")[1]
+    payload['lat'] = payload['latlng'].split(",")[0]
+    payload['lng'] = payload['latlng'].split(",")[1]
     let [result] = await stores.getStoresByLatLng(payload);
     let data = result.map((e) => ({
       "storeId": e['userId'],

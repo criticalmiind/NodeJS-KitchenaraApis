@@ -33,7 +33,7 @@ module.exports = class Stores {
     return db.execute(`
       SELECT userType AS type, userId AS id, fullName AS name, profilePic AS image, username, 'null' AS price FROM users WHERE (username LIKE '%${string}%' OR fullName LIKE '%${string}%') AND status = 1
       UNION
-      SELECT 'food' AS type, foodId AS id, foodName AS name, foodImage AS image, 'null' AS username, foodPrice AS price FROM foodItems WHERE (foodName LIKE '%${string}%' OR foodTags LIKE '%${string}%') AND foodDeleted = 0
+      SELECT 'food' AS type, foodId AS id, foodName AS name, foodImage AS image, 'null' AS username, foodPrice AS price FROM fooditems WHERE (foodName LIKE '%${string}%' OR foodTags LIKE '%${string}%') AND foodDeleted = 0
       UNION
       SELECT 'category' AS type, catId AS id, catName AS name, catImage AS image, 'null' AS username, 'null' AS price FROM categories WHERE catName LIKE '%${string}%'
     `);
