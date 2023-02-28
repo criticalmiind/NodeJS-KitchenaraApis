@@ -324,13 +324,13 @@ const uploadVideo = async (req, res, next) => {
       const result = await user.uploadVideo(payload, video);
       if (result) {
         return res
-          .status(201)
+          .status(200)
           .json({ message: " Video Uploaded Successfully" });
       } else {
         return next({ code: 404, message: "no data found" });
       }
     } catch (error) {
-      return next({ code: 401, message: error });
+      return next({ code: 401, message: error+"" });
     }
   } else {
     return next({ code: 400, message: "No Request Found" });

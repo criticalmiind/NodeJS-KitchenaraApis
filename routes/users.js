@@ -5,7 +5,7 @@ const commentsController = require("../controller/comments");
 const followingController = require("../controller/following");
 const validate = require("../helper/validate");
 const uploadVideo = require("../helper/uploadVideo");
-const uploadPhoto = require("../helper/uploadVideo");
+const uploadPhoto = require("../helper/uploadPhoto");
 const router = express.Router();
 
 router.get("/checkEmail/:email", userController.checkEmail);
