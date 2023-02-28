@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2023 at 08:43 PM
+-- Generation Time: Feb 28, 2023 at 08:45 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.0.25
 
@@ -110,18 +110,26 @@ INSERT INTO `following` (`followId`, `userId`, `followerId`, `status`, `createdA
 
 CREATE TABLE `fooditems` (
   `foodId` int(11) NOT NULL,
-  `storeId` varchar(11) NOT NULL,
+  `catId` varchar(11) NOT NULL,
   `userId` varchar(11) NOT NULL,
   `foodName` varchar(100) NOT NULL,
   `foodTags` text NOT NULL,
   `foodDescription` text NOT NULL,
   `foodPrice` int(11) NOT NULL,
   `foodQty` int(11) NOT NULL,
+  `foodImage` text DEFAULT NULL,
   `foodStatus` varchar(11) NOT NULL,
   `foodDeleted` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `fooditems`
+--
+
+INSERT INTO `fooditems` (`foodId`, `catId`, `userId`, `foodName`, `foodTags`, `foodDescription`, `foodPrice`, `foodQty`, `foodImage`, `foodStatus`, `foodDeleted`, `created_at`, `updated_at`) VALUES
+(1, '1', '1', 'Zinger Burger', 'Abc,Xyz', 'Food Description', 100, 10, NULL, '', 0, '2023-02-28 18:56:59', '2023-02-28 18:56:59');
 
 -- --------------------------------------------------------
 
@@ -145,7 +153,12 @@ CREATE TABLE `foodposts` (
 --
 
 INSERT INTO `foodposts` (`foodId`, `userId`, `video`, `videoDescription`, `location`, `commentsAllowed`, `status`, `createdAt`) VALUES
-(14, 1, '16774341021691677430314482VID-20200901-WA0001.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-26 22:55:02');
+(14, 1, '16774341021691677430314482VID-20200901-WA0001.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-26 22:55:02'),
+(15, 1, '16775694654990e311ee16eb01d3efeece1d3f71cca94.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-28 12:31:05'),
+(16, 1, '16775694825220e311ee16eb01d3efeece1d3f71cca94.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-28 12:31:22'),
+(17, 1, '16775695584200e311ee16eb01d3efeece1d3f71cca94.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-28 12:32:38'),
+(18, 1, '16775696393270e311ee16eb01d3efeece1d3f71cca94.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-28 12:33:59'),
+(19, 1, '16775696996090e311ee16eb01d3efeece1d3f71cca94.mp4', 'Testing 1234', '1234,1234', 1, 1, '2023-02-28 12:34:59');
 
 -- --------------------------------------------------------
 
@@ -261,8 +274,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userId`, `username`, `fullName`, `email`, `phoneNumber`, `password`, `profilePic`, `bio`, `userType`, `location`, `storeAddress`, `status`, `otp`, `createdAt`) VALUES
-(1, 'admin', 'Admin 123', 'admin@admin.com', '+923049758182', '$2b$10$8bUNfqiaGCXuIcXwllrgIOcFaSY5ym.RkhfIj06KC6IEDwWYimiQm', 'http://127.0.0.1:8000/get/photo/1677441162148.png', 'Bio', 'user', '123456,12345', '', 1, NULL, '2023-02-26 13:33:31'),
-(8, 'user1', NULL, NULL, '+923049758181', '$2b$10$UZ9sAtW6hNLdE7fQp7I6Ae6Qpm0eF03v4lqjNoJLo6UfN1DZWNY7q', NULL, NULL, 'user', NULL, '', 1, 0, '2023-02-28 00:06:09');
+(1, 'admin', 'Admin 123', 'admin@admin.com', '+923049758182', '$2b$10$8bUNfqiaGCXuIcXwllrgIOcFaSY5ym.RkhfIj06KC6IEDwWYimiQm', 'http://127.0.0.1:8000/get/photo/1677441162148.png', 'Bio', 'user', '51.507351,-0.127758', '', 1, NULL, '2023-02-26 13:33:31'),
+(8, 'user1', NULL, NULL, '+923049758181', '$2b$10$UZ9sAtW6hNLdE7fQp7I6Ae6Qpm0eF03v4lqjNoJLo6UfN1DZWNY7q', NULL, NULL, 'user', '51.514736,-0.118583', '', 1, 0, '2023-02-28 00:06:09');
 
 --
 -- Indexes for dumped tables
@@ -291,6 +304,12 @@ ALTER TABLE `commentsliked`
 --
 ALTER TABLE `following`
   ADD PRIMARY KEY (`followId`);
+
+--
+-- Indexes for table `fooditems`
+--
+ALTER TABLE `fooditems`
+  ADD PRIMARY KEY (`foodId`);
 
 --
 -- Indexes for table `foodposts`
@@ -351,10 +370,16 @@ ALTER TABLE `following`
   MODIFY `followId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `fooditems`
+--
+ALTER TABLE `fooditems`
+  MODIFY `foodId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `foodposts`
 --
 ALTER TABLE `foodposts`
-  MODIFY `foodId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `foodId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `likeditems`
