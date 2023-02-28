@@ -1,6 +1,7 @@
 const express = require("express");
 const auth = require("../middleware/validation");
 const userController = require("../controller/user");
+const storeController = require("../controller/stores");
 const commentsController = require("../controller/comments");
 const followingController = require("../controller/following");
 const validate = require("../helper/validate");
@@ -35,5 +36,16 @@ router.get("/follow/unfollow/:followId", auth, followingController.followUnfollo
 router.get("/is/follow/:followId", auth, followingController.isFollow);
 router.get("/followers/list", auth, followingController.followersList);
 router.get("/following/list", auth, followingController.followingList);
+
+// Stores
+router.post("/stores/list", storeController.getStores);
+router.get("/stores/categories/:storeId", storeController.getStoresCategories);
+router.get("/stores/food/items/:storeId", storeController.getStoresFoodItems);
+router.get("/stores/category/food/items/:catId", storeController.getCategoryFoodItems);
+
+
+// Search
+router.get("/search/:string", storeController.searchString);
+
 
 module.exports = router;

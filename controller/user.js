@@ -432,5 +432,5 @@ module.exports = {
   "uploadVideo": uploadVideo,
   "fetchALlVideos": fetchALlVideos,
   "getUserProfileById": getUserProfileById,
-  "likeUnlikeFoodPost": likeUnlikeFoodPost,
+  "likeUnlikeFoodPost": likeUnlikeFoodPost
 };
