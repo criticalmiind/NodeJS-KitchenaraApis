@@ -6,7 +6,6 @@ let storage = multer.diskStorage({
     cb(null, baseUrl + "/assets/foodVideos/");
   },
   filename: (req, file, cb) => {
-    console.log(req.headers);
     cb(null, Date.now() + file.originalname);
   },
 });

@@ -78,15 +78,10 @@ const getUserProfileById = async (req, res, next) => {
 const signUp = async (req, res, next) => {
   /**
      * @dev the payload will contain following properties:
-    
-
      * - `username`,
      * - `phoneNumber`,
      * - `password`,
      * - `email`,
-  
-   
- 
      */
   let payload = req.body;
 
@@ -119,22 +114,25 @@ const signUp = async (req, res, next) => {
           storeAddress: result[0].storeAddress,
           status: result[0].status,
         }
-        jwt.sign(
-          { data1 },
-          "secretKey",
-          { expiresIn: "1d" },
-          (err, token) => {
-            if (err) {
-              return res.status(401).json({ "message": err });
-            }
-            return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!" });
-          }
-        );
+        
+        let { token } = await generateToken(data1)
+        return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
+        // jwt.sign(
+        //   { data1 },
+        //   "secretKey",
+        //   { expiresIn: "1d" },
+        //   (err, token) => {
+        //     if (err) {
+        //       return res.status(401).json({ "message": err });
+        //     }
+        //     return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
+        //   }
+        // );
       } else {
         return next({ code: 404, message: "no data found" });
       }
     } catch (error) {
-      return next({ code: 401, message: error+"" });
+      return next({ code: 401, message: error + "" });
     }
   } else {
     return next({ code: 400, message: "No Request Found" });
@@ -210,7 +208,7 @@ const logIn = async (req, res, next) => {
               if (err) {
                 return res.status(401).json({ message: err });
               }
-              return res.status(201).json({ "userInfo": data1, token: token });
+              return res.status(200).json({ "userInfo": data1, token: token });
             }
           );
         });
@@ -291,7 +289,7 @@ const fetchALlVideos = async (req, res, next) => {
         videos.push(data);
       });
 
-      return res.status(201).json({
+      return res.status(200).json({
         videos: videos,
       });
     } else {
@@ -315,7 +313,8 @@ const uploadVideo = async (req, res, next) => {
   if (req.file == undefined) {
     return next({ code: 400, message: "Please upload a file!" });
   }
-  let video = req.file.filename;
+
+  let video = `${req.protocol}://${req.headers.host}/get/video/${req.file.filename}`;
 
   let payload = req.body;
   payload['userId'] = req.data.data1.userId
@@ -330,7 +329,7 @@ const uploadVideo = async (req, res, next) => {
         return next({ code: 404, message: "no data found" });
       }
     } catch (error) {
-      return next({ code: 401, message: error+"" });
+      return next({ code: 401, message: error + "" });
     }
   } else {
     return next({ code: 400, message: "No Request Found" });
@@ -365,39 +364,45 @@ const forgotPassword = async (req, res, next) => {
      * - `userId`
      */
   try {
+    const [result] = await user.userProfileById(req.body.userId);
+    if (result.length < 1) return res.status(401).json({ "message": "No user registered with this id!" });
+
     let otp = Math.floor(1000 + Math.random() * 9000);
-    let d = await user.updateOtp(req.body.userId, otp);
+    let d = await user.updateOtp(result[0].userId, otp);
+
     if (d) {
-      const [result] = await user.userProfileById(req.body.userId);
       let data1 = {
-        userId: result[0].userId,
-        username: result[0].username,
-        email: result[0].email,
-        fullName: result[0].fullName,
-        phoneNumber: result[0].phoneNumber,
-        profilePic: result[0].profilePic,
-        bio: result[0].bio,
-        userType: result[0].userType,
-        location: result[0].location,
-        storeAddress: result[0].storeAddress,
-        status: result[0].status,
+        "userId": result[0].userId,
+        "username": result[0].username,
+        "email": result[0].email,
+        "fullName": result[0].fullName,
+        "phoneNumber": result[0].phoneNumber,
+        "profilePic": result[0].profilePic,
+        "bio": result[0].bio,
+        "userType": result[0].userType,
+        "location": result[0].location,
+        "storeAddress": result[0].storeAddress,
+        "status": result[0].status,
       }
-      jwt.sign(
-        { data1 },
-        "secretKey",
-        { expiresIn: "1d" },
-        (err, token) => {
-          if (err) {
-            return res.status(401).json({ "message": err });
-          }
-          return res.status(200).json({ "token": token, "message": "Otp sent successfully!" });
-        }
-      );
+      let { token } = await generateToken(data1)
+      return res.status(200).json({ "token": token, "message": "Otp sent successfully!", "otp":otp });
+
+      // jwt.sign(
+      //   { data1 },
+      //   "secretKey",
+      //   { expiresIn: "1d" },
+      //   (err, token) => {
+      //     if (err) {
+      //       return res.status(401).json({ "message": err });
+      //     }
+      //     return res.status(200).json({ "token": token, "message": "Otp sent successfully!", "otp":payload['otp'] });
+      //   }
+      // );
     } else {
       return res.status(401).json({ message: "Invalid Request!" });
     }
   } catch (error) {
-    return next({ code: 401, message: error+"" });
+    return next({ code: 401, message: error + "" });
   }
 }
 
@@ -410,20 +415,36 @@ const verifyOtp = async (req, res, next) => {
     let [result] = await user.verifyOtp(req.data.data1.userId, req.body.otp);
     if (result.length > 0) {
       await user.updateProfileStatus(req.data.data1.userId, 1)
-      return res.status(200).json({ message: "Otp Verified!", "userInfo":req.data.data1 });
+      return res.status(200).json({ message: "Otp Verified!", "userInfo": req.data.data1 });
     } else {
       return res.status(401).json({ message: "Inavlid Otp! Please try again!" });
     }
   } catch (error) {
-    return next({ code: 401, message: error+"" });
+    return next({ code: 401, message: error + "" });
   }
+}
+
+function generateToken(data1) {
+  return new Promise((resolve, reject) => {
+    jwt.sign(
+      { data1 },
+      "secretKey",
+      { expiresIn: "1d" },
+      (err, token) => {
+        if (err) {
+          reject({ "token": false });
+        }
+        resolve({ "token": token });
+      }
+    );
+  });
 }
 
 module.exports = {
   "userLogin": logIn,
   "authentication": authentication,
   "signUp": signUp,
-  "forgotPassword":forgotPassword,
+  "forgotPassword": forgotPassword,
   "verifyOtp": verifyOtp,
   "updateProfile": updateProfile,
   "checkUserName": checkUserName,
