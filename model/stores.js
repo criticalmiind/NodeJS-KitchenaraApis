@@ -55,5 +55,4 @@ module.exports = class Stores {
       LIMIT ${offset}, ${limit};
     `)
   }
-
 };

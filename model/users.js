@@ -15,8 +15,8 @@ module.exports = class Users {
     return db.execute(`SELECT * FROM  users WHERE phoneNumber = '${phoneNumber}'`);
   }
 
-  logIn(email) {
-    return db.execute(`SELECT * FROM  users where email = '${email}' `);
+  logIn(loginId) {
+    return db.execute(`SELECT * FROM  users where email = '${loginId}' OR phoneNumber = '${loginId}' OR username = '${loginId}';`);
   }
 
   singUp({ username, phoneNumber, password, otp, userType, email }) {
