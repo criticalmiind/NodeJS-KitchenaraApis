@@ -29,20 +29,31 @@ module.exports = class Stores {
     return db.execute(`SELECT fi.*, u.* FROM fooditems fi JOIN users u ON fi.userId = u.userId WHERE fi.catId = ${catId} AND fi.foodDeleted = 0;`)
   }
 
-  searchString(string) {
+  searchString(string, limit = 10) {
     return db.execute(`
-      SELECT userType AS type, userId AS id, fullName AS name, profilePic AS image, username, 'null' AS price FROM users WHERE (username LIKE '%${string}%' OR fullName LIKE '%${string}%') AND status = 1
+      SELECT DISTINCT userType AS type, userId AS id, fullName AS name, profilePic AS image, username, 'null' AS price 
+      FROM users 
+      WHERE (username LIKE '%${string}%' OR fullName LIKE '%${string}%') AND status = 1
       UNION
-      SELECT 'food' AS type, foodId AS id, foodName AS name, foodImage AS image, 'null' AS username, foodPrice AS price FROM fooditems WHERE (foodName LIKE '%${string}%' OR foodTags LIKE '%${string}%') AND foodDeleted = 0
+      SELECT DISTINCT 'food' AS type, foodId AS id, foodName AS name, foodImage AS image, 'null' AS username, foodPrice AS price 
+      FROM fooditems 
+      WHERE (foodName LIKE '%${string}%' OR foodTags LIKE '%${string}%') AND foodDeleted = 0
       UNION
-      SELECT 'category' AS type, catId AS id, catName AS name, catImage AS image, 'null' AS username, 'null' AS price FROM categories WHERE catName LIKE '%${string}%'
-    `);
+      SELECT DISTINCT 'category' AS type, catId AS id, catName AS name, catImage AS image, 'null' AS username, 'null' AS price 
+      FROM categories 
+      WHERE catName LIKE '%${string}%' 
+      LIMIT ${limit}
+    `)
   }
 
-
-  //   SELECT fi.foodId, fi.foodName, fi.foodTags, c.categoryName, s.storeName 
-  // FROM fooditems fi 
-  // JOIN categories c ON fi.catId = c.categoryId 
-  // JOIN stores s ON fi.userId = s.userId
+  getStoresByCategoryName(catName, offset = 0, limit = 10) {
+    return db.execute(`
+      SELECT DISTINCT u.* 
+      FROM users u
+      INNER JOIN categories c ON u.userId = c.userId
+      WHERE c.catName LIKE '%${catName}%' 
+      LIMIT ${offset}, ${limit};
+    `)
+  }
 
 };

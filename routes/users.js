@@ -37,15 +37,16 @@ router.get("/is/follow/:followId", auth, followingController.isFollow);
 router.get("/followers/list", auth, followingController.followersList);
 router.get("/following/list", auth, followingController.followingList);
 
-// Stores
-router.post("/stores/list", storeController.getStores);
-router.get("/stores/categories/:storeId", storeController.getStoresCategories);
-router.get("/stores/food/items/:storeId", storeController.getStoresFoodItems);
-router.get("/stores/category/food/items/:catId", storeController.getCategoryFoodItems);
+// // Stores
+// router.post("/stores/list", storeController.getStores);
+// router.get("/stores/categories/:storeId", storeController.getStoresCategories);
+// router.get("/stores/food/items/:storeId", storeController.getStoresFoodItems);
+// router.get("/stores/category/food/items/:catId", storeController.getCategoryFoodItems);
+// router.get("/stores/get/by/category/name/:offset/:limit/:catName", storeController.getStoresByCategoryName);
 
 
-// Search
-router.get("/search/:string", storeController.searchString);
+// // Search
+// router.get("/search/:limit/:string", storeController.searchString);
 
 
 module.exports = router;

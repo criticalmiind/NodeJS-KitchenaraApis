@@ -1,10 +1,4 @@
-const jwt = require("jsonwebtoken");
 const Stores = require("../model/stores");
-const LikeItems = require("../model/likeditems");
-const { validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
-const path = require("path");
-const baseUrl = require("../config/baseUrl");
 
 let stores = new Stores();
 
@@ -122,11 +116,29 @@ const searchString = async (req, res, next) => {
   /**
     * @dev the payload will contain following properties:
     * - `string`
+    * - `limit`
     */
-
+  const { limit, string } = req.params
   try {
-    let [result] = await stores.searchString(req.params.string);
-    return res.status(200).json({ "data": result });
+    let [result] = await stores.searchString(string, limit);
+    let data = result.sort(() => Math.random() - 0.5);
+
+    return res.status(200).json({ "data": data });
+  } catch (error) {
+    return next({ code: 401, message: error + "" });
+  }
+}
+
+const getStoresByCategoryName = async (req, res, next) => {
+  /**
+    * @dev the payload will contain following properties:
+    * - `catName`
+    */
+  const { catName } = req.params
+  try {
+    let [result] = await stores.getStoresByCategoryName(catName);
+    let data = result.sort(() => Math.random() - 0.5);
+    return res.status(200).json({ "data": data });
   } catch (error) {
     return next({ code: 401, message: error + "" });
   }
@@ -137,5 +149,6 @@ module.exports = {
   "getStoresCategories": getStoresCategories,
   "getStoresFoodItems": getStoresFoodItems,
   "getCategoryFoodItems": getCategoryFoodItems,
-  "searchString": searchString
+  "searchString": searchString,
+  "getStoresByCategoryName": getStoresByCategoryName
 };
