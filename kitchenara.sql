@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 01, 2023 at 03:10 PM
+-- Generation Time: Mar 01, 2023 at 09:34 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.0.25
 
@@ -220,15 +220,16 @@ INSERT INTO `likeditems` (`likesId`, `userId`, `foodId`, `status`, `createdAt`) 
 
 CREATE TABLE `orderdetails` (
   `orderId` int(11) NOT NULL,
+  `tackingId` varchar(255) NOT NULL,
   `userId` int(11) NOT NULL,
   `storeId` int(11) NOT NULL,
-  `foodId` int(11) NOT NULL,
-  `deliveryLocation` text DEFAULT NULL,
+  `deliveryAddress` text DEFAULT NULL,
+  `deliveryLocation` varchar(255) DEFAULT NULL,
   `totalBill` varchar(255) DEFAULT NULL,
   `paymentMethod` varchar(255) DEFAULT NULL,
   `isPayed` int(11) NOT NULL DEFAULT 0,
   `json` text DEFAULT NULL,
-  `status` int(11) NOT NULL DEFAULT 1,
+  `status` enum('pending','accepted','enroute','delivered') NOT NULL DEFAULT 'pending',
   `created_dt` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_dt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -432,7 +433,7 @@ ALTER TABLE `likeditems`
 -- AUTO_INCREMENT for table `orderdetails`
 --
 ALTER TABLE `orderdetails`
-  MODIFY `orderId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `orderId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `usercart`
