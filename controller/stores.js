@@ -41,13 +41,35 @@ const getStoresCategories = async (req, res, next) => {
 
   try {
     let [result] = await stores.getStoresCategories(req.params.storeId);
-    let data = result.map((e) => ({
-      "catId": e['catId'],
-      "catName": e['catName'],
-      "catDescription": e['catDescription'],
-      "catImage": e['catImage'],
-    }))
-    return res.status(200).json({ "data": data });
+    let categories = []
+    for (let i = 0; i < result.length; i++) {
+      const el = result[i];
+      let [food] = await stores.getCategoryFoodItems(el['catId'])
+      categories.push({
+        "catId": el['catId'],
+        "catName": el['catName'],
+        "catDescription": el['catDescription'],
+        "catImage": el['catImage'],
+        "items": food.map((f)=>({
+          "foodId": f.id,
+          "storeId": f.userId,
+          "storeName": f.fullName,
+          "foodName": f.foodName,
+          "foodTags": f.foodTags,
+          "foodDescription": f.foodDescription,
+          "foodPrice": f.foodPrice,
+          "foodQty": f.foodQty,
+          "foodImage": f.foodImage,
+        }))
+      })
+    };
+    // let data = result.map((e) => ({
+    //   "catId": e['catId'],
+    //   "catName": e['catName'],
+    //   "catDescription": e['catDescription'],
+    //   "catImage": e['catImage'],
+    // }))
+    return res.status(200).json({ "data": categories });
   } catch (error) {
     return next({ code: 401, message: error + "" });
   }
