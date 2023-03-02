@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 });
 app.use("/api/users", users);
 app.use("/api/stores", stores);
-app.use("/get", files);
+app.use("/api/get", files);
 
 app.get("/", (req, res) => {
   res.write("<h1>welcome</h1>");
