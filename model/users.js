@@ -37,7 +37,7 @@ module.exports = class Users {
   }
 
   updateOtp(userId, otp) {
-    return db.execute(`UPDATE users SET otp = ${otp} WHERE phoneNumber=${userId} OR email=${userId} OR userId=${userId}`);
+    return db.execute(`UPDATE users SET otp = ${otp} WHERE phoneNumber='${userId}' OR userId='${userId}' OR email='${userId}'`);
   }
 
   verifyOtp(userId, otp) {
