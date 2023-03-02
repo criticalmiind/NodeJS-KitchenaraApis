@@ -102,7 +102,8 @@ const signUp = async (req, res, next) => {
       payload['otp'] = Math.floor(1000 + Math.random() * 9000);
       const d = await user.singUp(payload);
       if (d) {
-        const [result] = await user.userProfileById(payload.phoneNumber);
+        let userId = d.length > 0 ? d[0]['insertId'] : false
+        const [result] = await user.userProfileById(userId?userId:payload.phoneNumber);
         let data1 = {
           userId: result[0].userId,
           username: result[0].username,
@@ -119,17 +120,6 @@ const signUp = async (req, res, next) => {
 
         let { token } = await generateToken(data1)
         return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
-        // jwt.sign(
-        //   { data1 },
-        //   "secretKey",
-        //   { expiresIn: "1d" },
-        //   (err, token) => {
-        //     if (err) {
-        //       return res.status(401).json({ "message": err });
-        //     }
-        //     return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
-        //   }
-        // );
       } else {
         return next({ code: 404, message: "no data found" });
       }
