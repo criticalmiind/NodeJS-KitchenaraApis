@@ -19,6 +19,7 @@ router.post("/forgot/password", userController.forgotPassword);
 router.get("/checkSession", auth, userController.authentication);
 router.post("/verify/otp", auth, userController.verifyOtp);
 router.post("/update/profile", auth, uploadPhoto, userController.updateProfile);
+router.post("/reset/passsword", auth, userController.updateProfile);
 router.get("/profile/by/id/:userId", userController.getUserProfileById);
 
 // Videos, Comments, Likes

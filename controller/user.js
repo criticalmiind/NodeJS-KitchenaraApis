@@ -157,7 +157,7 @@ const updateProfile = async (req, res, next) => {
     if (result) {
       return res.status(200).json({ message: "Profile updated successfully" });
     } else {
-      return next({ code: 404, message: "Profile session expired!" });
+      return next({ code: 401, message: "Profile session expired!" });
     }
   } catch (error) {
     return next({ code: 401, message: error });
