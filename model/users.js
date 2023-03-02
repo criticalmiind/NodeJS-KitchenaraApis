@@ -41,12 +41,11 @@ module.exports = class Users {
   }
 
   verifyOtp(userId, otp) {
-    console.log
     return db.execute(`SELECT * FROM users WHERE otp = ${otp} AND (phoneNumber='${userId}' OR userId='${userId}' OR email='${userId}')`);
   }
 
   updateProfileStatus(userId, status) {
-    return db.execute(`UPDATE users SET status = ${status}, otp = '' WHERE phoneNumber='${userId}' OR email='${userId}' OR userId='${userId}'`);
+    return db.execute(`UPDATE users SET status = ${status}, otp = 0 WHERE phoneNumber='${userId}' OR email='${userId}' OR userId='${userId}'`);
   }
 
   uploadVideo({ userId, videoDescription, location, commentsAllowed }, video) {
