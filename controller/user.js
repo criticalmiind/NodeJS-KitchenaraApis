@@ -315,7 +315,7 @@ const uploadVideo = async (req, res, next) => {
     return next({ code: 400, message: "Please upload a file!" });
   }
 
-  let video = `${req.protocol}://${req.headers.host}/get/video/${req.file.filename}`;
+  let video = `${req.protocol}://${req.headers.host}/api/get/video/${req.file.filename}`;
 
   let payload = req.body;
   payload['userId'] = req.data.data1.userId

@@ -33,7 +33,7 @@ function uploadPhoto(req, res, next) {
       return res.status(500).json({ message: "Error saving profile picture" });
     }
     // req.profilePicUrl = `/assets/profilePics/${fileName}`;
-    req.body.profilePic = `${req.protocol}://${req.headers.host}/get/photo/${fileName}`;
+    req.body.profilePic = `${req.protocol}://${req.headers.host}/api/get/photo/${fileName}`;
     next();
   });
 }
