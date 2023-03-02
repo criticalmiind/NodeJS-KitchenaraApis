@@ -65,7 +65,7 @@ module.exports = class Users {
           LEFT JOIN following f2 ON u.userId = f2.followerId -- To count the number of users following this user
           LEFT JOIN foodposts fp ON u.userId = fp.userId -- To count the number of videos this user
       WHERE 
-          u.userId = '${userId}' OR u.phoneNumber = '${userId}' OR u.email = '${userId}'
+          u.userId = '${userId}' OR u.phoneNumber = '${userId}' OR CAST(u.email AS CHAR) = '${userId}'
       GROUP BY 
           u.userId;`);
   }
