@@ -481,7 +481,7 @@ const getOrdersList = async (req, res, next) => {
     const [result] = await order.getOrdersByUserId(userId, req.params.filter)
     data = []
     result.forEach(el => {
-      el['json'] = (!el.json && el.json != '') ? JSON.parse(el.json) : {}
+      el['json'] = (el.json && el.json != '') ? JSON.parse(el.json) : {}
       data.push(el)
     });
     return res.status(200).json({ "data": data });

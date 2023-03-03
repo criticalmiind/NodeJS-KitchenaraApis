@@ -33,7 +33,6 @@ module.exports = class Users {
     if (location) query += `location='${location}', `
     if (storeAddress) query += `storeAddress='${storeAddress}', `
     query += `status=1 WHERE userId=${userId}`
-    console.log(query);
     return db.execute(query);
   }
 
