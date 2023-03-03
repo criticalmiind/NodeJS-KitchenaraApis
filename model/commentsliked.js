@@ -1,17 +1,1 @@
-const db = require("../config/database");
-
-module.exports = class CommentsLiked {
-  constructor() { }
-
-  is_already_liked(userId, commentId) {
-    return db.execute(`SELECT * FROM commentsliked where userId = ${userId} AND commentId = ${commentId}`);
-  }
-
-  like(userId, commentId) {
-    return db.execute(`INSERT INTO commentsliked SET userId = ${userId}, commentId = ${commentId}, status = 1`);
-  }
-
-  undo_like(userId, commentId) {
-    return db.execute(`DELETE FROM commentsliked WHERE userId = ${userId} AND commentId = ${commentId}`);
-  }
-};
+function _0x4918(_0x16db70,_0x160c34){const _0x518596=_0x5185();return _0x4918=function(_0x491835,_0x3d74c0){_0x491835=_0x491835-0xc0;let _0x43a225=_0x518596[_0x491835];return _0x43a225;},_0x4918(_0x16db70,_0x160c34);}const _0x1d2864=_0x4918;(function(_0x4751c9,_0x5733bb){const _0x57cfb9=_0x4918,_0x126b75=_0x4751c9();while(!![]){try{const _0x54f77e=parseInt(_0x57cfb9(0xc5))/0x1*(parseInt(_0x57cfb9(0xc0))/0x2)+parseInt(_0x57cfb9(0xc7))/0x3+parseInt(_0x57cfb9(0xc1))/0x4+parseInt(_0x57cfb9(0xd0))/0x5+-parseInt(_0x57cfb9(0xc9))/0x6*(-parseInt(_0x57cfb9(0xce))/0x7)+-parseInt(_0x57cfb9(0xc2))/0x8+-parseInt(_0x57cfb9(0xcf))/0x9;if(_0x54f77e===_0x5733bb)break;else _0x126b75['push'](_0x126b75['shift']());}catch(_0x44b6ab){_0x126b75['push'](_0x126b75['shift']());}}}(_0x5185,0xab145));const db=require('../config/database');function _0x5185(){const _0x19662a=['undo_like','3863211HlYsCS',',\x20commentId\x20=\x20','6uktHzj','\x20AND\x20commentId\x20=\x20','like','exports','INSERT\x20INTO\x20commentsliked\x20SET\x20userId\x20=\x20','9360967UHqiKh','28921374AwlbzH','931775xjbTEW','is_already_liked','1292MGVRZF','4901992AslaDL','3162048jTjgjb','execute',',\x20status\x20=\x201','422fwVCTv'];_0x5185=function(){return _0x19662a;};return _0x5185();}module[_0x1d2864(0xcc)]=class CommentsLiked{constructor(){}[_0x1d2864(0xd1)](_0x229927,_0x51f72e){const _0x5944d4=_0x1d2864;return db[_0x5944d4(0xc3)]('SELECT\x20*\x20FROM\x20commentsliked\x20where\x20userId\x20=\x20'+_0x229927+_0x5944d4(0xca)+_0x51f72e);}[_0x1d2864(0xcb)](_0xdbe349,_0x1bd8e0){const _0x5d10f2=_0x1d2864;return db[_0x5d10f2(0xc3)](_0x5d10f2(0xcd)+_0xdbe349+_0x5d10f2(0xc8)+_0x1bd8e0+_0x5d10f2(0xc4));}[_0x1d2864(0xc6)](_0x2789fa,_0x474bd8){const _0xe8eb53=_0x1d2864;return db[_0xe8eb53(0xc3)]('DELETE\x20FROM\x20commentsliked\x20WHERE\x20userId\x20=\x20'+_0x2789fa+_0xe8eb53(0xca)+_0x474bd8);}};
