@@ -3,6 +3,14 @@ const db = require("../config/database");
 module.exports = class Stores {
   constructor() { }
 
+  getHomeCategories() {
+    return db.execute(`SELECT DISTINCT * FROM categories WHERE isHome = 1 GROUP BY catName`)
+  }
+
+  getPopularCategories() {
+    return db.execute(`SELECT DISTINCT * FROM categories WHERE isPopular = 1 GROUP BY catName`)
+  }
+
   getStoresByLatLng({ lat, lng, offset = 0, limit = 10, radius = 6371 }) {
     return db.execute(`
       SELECT * 
@@ -12,7 +20,7 @@ module.exports = class Stores {
         FROM users u
         WHERE u.status = 1
       ) AS temp
-      WHERE distance <= 2
+      WHERE distance <= 2 AND userType = 'store'
       LIMIT ${offset}, ${limit};
     `)
   }

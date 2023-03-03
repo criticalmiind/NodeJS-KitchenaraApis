@@ -2,6 +2,31 @@ const Stores = require("../model/stores");
 
 let stores = new Stores();
 
+const getHomeData = async (req, res, next) => {
+  try {
+    let [home] = await stores.getHomeCategories()
+    let [popular] = await stores.getPopularCategories()
+
+    return res.status(200).json({
+      "data": {
+        "popular": popular.map((e) => ({
+          "catName": e.catName,
+          "catDescription": e.catDescription,
+          "catImage": e.catImage,
+        })),
+        "home": home.map((e) => ({
+          "catName": e.catName,
+          "catDescription": e.catDescription,
+          "catImage": e.catImage
+        }))
+      }
+    });
+  } catch (error) {
+    return next({ code: 401, message: error + "" });
+  }
+}
+
+
 const getStores = async (req, res, next) => {
   /**
     * @dev the payload will contain following properties:
@@ -50,7 +75,7 @@ const getStoresCategories = async (req, res, next) => {
         "catName": el['catName'],
         "catDescription": el['catDescription'],
         "catImage": el['catImage'],
-        "items": food.map((f)=>({
+        "items": food.map((f) => ({
           "foodId": f.foodId,
           "storeId": f.userId,
           "storeName": f.fullName,
@@ -167,6 +192,7 @@ const getStoresByCategoryName = async (req, res, next) => {
 }
 
 module.exports = {
+  "getHomeData": getHomeData,
   "getStores": getStores,
   "getStoresCategories": getStoresCategories,
   "getStoresFoodItems": getStoresFoodItems,

@@ -58,6 +58,7 @@ const checkPhoneNumber = async (req, res, next) => {
 
 const getUserProfileById = async (req, res, next) => {
   let userId = req.params.userId;
+  // let userId = req.data.data1.userId;
 
   try {
     const [result] = await user.userProfileById(userId);
@@ -68,11 +69,27 @@ const getUserProfileById = async (req, res, next) => {
       if (data.userType != 'user') delete(data['userAddresses'])
       delete (data['password'])
       delete(data['otp'])
-      // delete(data['phone'])
-      // delete(data['email'])
-      // delete(data['userType'])
-      // delete(data['createdAt'])
-      // delete(data['username'])
+      return res.status(200).json({ data: data });
+    } else {
+      return next({ code: 401, message: "no user profile found!" });
+    }
+  } catch (error) {
+    return next({ code: 401, message: error });
+  }
+};
+
+const getUserProfile = async (req, res, next) => {
+  let userId = req.data.data1.userId;
+
+  try {
+    const [result] = await user.userProfileById(userId);
+    if (result.length > 0) {
+      let uAddress = result[0]['userAddresses']
+      let data = result[0]
+      data['userAddresses'] = (uAddress && uAddress != '') ? JSON.parse(uAddress) : []
+      if (data.userType != 'user') delete(data['userAddresses'])
+      delete (data['password'])
+      delete(data['otp'])
       return res.status(200).json({ data: data });
     } else {
       return next({ code: 401, message: "no user profile found!" });
@@ -110,17 +127,18 @@ const signUp = async (req, res, next) => {
         let userId = d.length > 0 ? d[0]['insertId'] : false
         const [result] = await user.userProfileById(userId ? userId : payload.phoneNumber);
         let data1 = {
-          userId: result[0].userId,
-          username: result[0].username,
-          email: result[0].email,
-          fullName: result[0].fullName,
-          phoneNumber: result[0].phoneNumber,
-          profilePic: result[0].profilePic,
-          bio: result[0].bio,
-          userType: result[0].userType,
-          location: result[0].location,
-          storeAddress: result[0].storeAddress,
-          status: result[0].status,
+          "userId": result[0].userId,
+          "username": result[0].username,
+          "email": result[0].email,
+          "fullName": result[0].fullName,
+          "phoneNumber": result[0].phoneNumber,
+          "profilePic": result[0].profilePic,
+          "bio": result[0].bio,
+          "userType": result[0].userType,
+          "location": result[0].location,
+          "storeAddress": result[0].storeAddress,
+          "userAddresses": [],
+          "status": result[0].status,
         }
 
         let { token } = await generateToken(data1)
@@ -539,6 +557,7 @@ module.exports = {
   "uploadVideo": uploadVideo,
   "fetchALlVideos": fetchALlVideos,
   "getUserProfileById": getUserProfileById,
+  "getUserProfile": getUserProfile,
   "likeUnlikeFoodPost": likeUnlikeFoodPost,
   "submitOrder": submitOrder,
   "getOrdersList": getOrdersList,

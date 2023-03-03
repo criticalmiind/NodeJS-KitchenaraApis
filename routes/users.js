@@ -21,6 +21,7 @@ router.post("/verify/otp", auth, userController.verifyOtp);
 router.post("/update/profile", auth, uploadPhoto, userController.updateProfile);
 router.post("/reset/passsword", auth, userController.updateProfile);
 router.get("/profile/by/id/:userId", userController.getUserProfileById);
+router.get("/get/profile", auth, userController.getUserProfile);
 
 // Videos, Comments, Likes
 router.post("/uploadVideo", auth, uploadVideo, userController.uploadVideo);

@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const users = require("./routes/users");
 const stores = require("./routes/stores");
+const home = require("./routes/home");
 const files = require("./routes/files");
 const morgan = require("morgan");
 const path = require("path");
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 });
 app.use("/api/users", users);
 app.use("/api/stores", stores);
+app.use("/api/home", home);
 app.use("/api/get", files);
 
 app.get("/", (req, res) => {
