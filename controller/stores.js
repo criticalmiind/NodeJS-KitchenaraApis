@@ -51,7 +51,7 @@ const getStoresCategories = async (req, res, next) => {
         "catDescription": el['catDescription'],
         "catImage": el['catImage'],
         "items": food.map((f)=>({
-          "foodId": f.id,
+          "foodId": f.foodId,
           "storeId": f.userId,
           "storeName": f.fullName,
           "foodName": f.foodName,
