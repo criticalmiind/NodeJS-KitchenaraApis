@@ -25,13 +25,14 @@ module.exports = class Users {
 
   updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location, storeAddress }, userId) {
     let query = `UPDATE users SET `;
-    if (email) query += `email='${email}', `
+    // if (email) query += `email='${email}', `
     if (fullName) query += `fullName='${fullName}', `
     if (password) query += `password='${password}', `
     if (profilePic) query += `profilePic='${profilePic}', `
     if (bio) query += `bio='${bio}', `
     if (location) query += `location='${location}', `
     if (storeAddress) query += `storeAddress='${storeAddress}', `
+    if (userAddresses) query += `userAddresses='${JSON.stringify(userAddresses)}', `
     query += `status=1 WHERE userId=${userId}`
     return db.execute(query);
   }

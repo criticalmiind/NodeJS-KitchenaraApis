@@ -62,13 +62,18 @@ const getUserProfileById = async (req, res, next) => {
   try {
     const [result] = await user.userProfileById(userId);
     if (result.length > 0) {
-      delete (result[0]['password'])
-      // delete(result[0]['phone'])
-      // delete(result[0]['email'])
-      // delete(result[0]['userType'])
-      // delete(result[0]['createdAt'])
-      // delete(result[0]['username'])
-      return res.status(200).json({ data: result[0] });
+      let uAddress = result[0]['userAddresses']
+      let data = result[0]
+      data['userAddresses'] = (uAddress && uAddress != '') ? JSON.parse(uAddress) : []
+      if (data.userType != 'user') delete(data['userAddresses'])
+      delete (data['password'])
+      delete(data['otp'])
+      // delete(data['phone'])
+      // delete(data['email'])
+      // delete(data['userType'])
+      // delete(data['createdAt'])
+      // delete(data['username'])
+      return res.status(200).json({ data: data });
     } else {
       return next({ code: 401, message: "no user profile found!" });
     }
@@ -103,7 +108,7 @@ const signUp = async (req, res, next) => {
       const d = await user.singUp(payload);
       if (d) {
         let userId = d.length > 0 ? d[0]['insertId'] : false
-        const [result] = await user.userProfileById(userId?userId:payload.phoneNumber);
+        const [result] = await user.userProfileById(userId ? userId : payload.phoneNumber);
         let data1 = {
           userId: result[0].userId,
           username: result[0].username,
