@@ -1,25 +1,24 @@
-const path = require("path");
-const baseUrl = require("../config/baseUrl");
+const express = require('express');
+const app = express();
+const path = require('path');
 const fs = require('fs');
+const { createServer } = require('http');
 const { createReadStream } = require('fs');
 const { promisify } = require('util');
 const { pipeline } = require('stream');
 const rangeParser = require('range-parser');
+const morgan = require('morgan');
 
-// const playVideo = (req, res) => {
-//   const filePath = path.join(baseUrl, 'assets', 'foodVideos', req.params.filename);
-//   res.sendFile(filePath);
-// }
+const videoPath = path.join(__dirname, 'assets', 'foodVideos', '16779522877522c5c62930907162a9eabeb00180cac6f.mp4');
+const stat = promisify(fs.stat);
 
-const getPhoto = (req, res) => {
-  const filePath = path.join(baseUrl, 'assets', 'Photos', req.params.filename);
-  res.sendFile(filePath);
-}
+const PORT = process.env.PORT || 8001;
+const server = createServer(app);
 
-const playVideo = async(req, res) => {
-  const videoPath = path.join(baseUrl, 'assets', 'foodVideos', req.params.filename);
-  const stat = promisify(fs.stat);
+app.use(morgan('dev'));
 
+// Route for serving the video stream
+app.get('/video', async (req, res) => {
   const { size } = await stat(videoPath);
   const range = req.headers.range;
 
@@ -49,7 +48,10 @@ const playVideo = async(req, res) => {
     });
   } else {
     // Set headers for full content
-    res.status(200).set({ 'Content-Length': size, 'Content-Type': 'video/mp4' });
+    res.status(200).set({
+      'Content-Length': size,
+      'Content-Type': 'video/mp4',
+    });
 
     const fileStream = createReadStream(videoPath);
     pipeline(fileStream, res, (err) => {
@@ -59,10 +61,14 @@ const playVideo = async(req, res) => {
       }
     });
   }
-}
+});
 
+// Serve the index page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
-module.exports = {
-  "playVideo": playVideo,
-  "getPhoto": getPhoto
-};
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

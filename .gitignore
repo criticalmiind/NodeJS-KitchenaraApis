@@ -1,6 +1,7 @@
 node_modules/
 backup_*/
 aaa/
+*.mp4
 # */videos/*
 # */foodVideos/*
 # */Photos/*
