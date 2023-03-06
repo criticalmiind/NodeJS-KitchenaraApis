@@ -369,11 +369,12 @@ const uploadVideo = async (req, res, next) => {
     if (req.file == undefined) {
         return next({ code: 400, message: "Please upload a file!" });
     }
+    let payload = req.body;
+
     payload['thumbnail'] = await takeScreenshot(req.file.filename)
     console.log(payload)
     let video = `${req.protocol}://${req.headers.host}/api/get/video/${req.file.filename}`;
 
-    let payload = req.body;
     payload['userId'] = req.data.data1.userId
     if (payload) {
         try {
