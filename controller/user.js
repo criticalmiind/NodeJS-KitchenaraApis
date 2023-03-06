@@ -6,6 +6,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const baseUrl = require("../config/baseUrl");
+const { takeScreenshot } = require("../helper/other");
 
 let user = new Users();
 let order = new OrderDetails();
@@ -368,7 +369,8 @@ const uploadVideo = async (req, res, next) => {
     if (req.file == undefined) {
         return next({ code: 400, message: "Please upload a file!" });
     }
-
+    payload['thumbnail'] = await takeScreenshot(req.file.filename)
+    console.log(payload)
     let video = `${req.protocol}://${req.headers.host}/api/get/video/${req.file.filename}`;
 
     let payload = req.body;

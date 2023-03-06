@@ -67,8 +67,8 @@ module.exports = class Users {
     }
 
 
-    uploadVideo({ userId, videoDescription, location, commentsAllowed }, video) {
-        return db.execute(`INSERT INTO  foodposts SET userId = ${userId}, videoDescription = '${videoDescription}',location = '${location}',commentsAllowed = ${commentsAllowed}, video = '${video}'`);
+    uploadVideo({ userId, thumbnail=null, videoDescription=null, location, commentsAllowed }, video) {
+        return db.execute(`INSERT INTO  foodposts SET userId = ${userId}, thumbnail='${thumbnail}', videoDescription = '${videoDescription}',location = '${location}',commentsAllowed = ${commentsAllowed}, video = '${video}'`);
     }
 
     updateVideoThumbnail({ thumbnail, videoId }, userId) {

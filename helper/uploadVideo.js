@@ -1,6 +1,7 @@
 const util = require("util");
 const multer = require("multer");
 const baseUrl = require("../config/baseUrl");
+
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, baseUrl + "/assets/foodVideos/");
@@ -9,6 +10,7 @@ let storage = multer.diskStorage({
     cb(null, Date.now() + file.originalname);
   },
 });
+
 let uploadFile = multer({
   storage: storage,
 }).single("file");
