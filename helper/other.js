@@ -18,7 +18,7 @@ function takeScreenshot(name) {
                     folder: path.join(baseUrl, 'assets', 'Thumbnail'),
                 })
                 .on('end', () => {
-                    resolve(name);
+                    resolve(`${name}.png`);
                 })
                 .on('error', (err) => {
                     console.error(err);
