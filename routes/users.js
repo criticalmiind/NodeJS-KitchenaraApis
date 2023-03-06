@@ -23,9 +23,13 @@ router.post("/reset/passsword", auth, userController.updateProfile);
 router.get("/profile/by/id/:userId", userController.getUserProfileById);
 router.get("/get/profile", auth, userController.getUserProfile);
 
-// Videos, Comments, Likes
+// Videos
 router.post("/uploadVideo", auth, uploadVideo, userController.uploadVideo);
-router.get("/browseVideos/limit/:limit/offset/:offset", auth, userController.fetchALlVideos);
+router.post("/upload/thumbnail", auth, uploadPhoto, userController.uploadVideoThumbnail);
+router.get("/browseVideos/limit/:limit/offset/:offset", userController.fetchALlVideos);
+router.get("/fetch/videos/limit/:limit/offset/:offset", auth, userController.fetchUserVideos);
+
+// Comments, Likes
 router.get("/video/like/unlike/:foodId", auth, userController.likeUnlikeFoodPost);
 router.post("/video/comment", auth, commentsController.commentPost);
 router.post("/video/update/comment", auth, commentsController.updateComment);

@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get('/video/:filename', filesController.playVideo);
 router.get('/photo/:filename', filesController.getPhoto);
+router.get('/thumbnail/:filename', filesController.getThumbnail);
 
 
 module.exports = router;

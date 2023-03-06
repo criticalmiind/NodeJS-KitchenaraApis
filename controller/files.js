@@ -16,6 +16,11 @@ const getPhoto = (req, res) => {
   res.sendFile(filePath);
 }
 
+const getThumbnail = (req, res) => {
+  const filePath = path.join(baseUrl, 'assets', 'Thumbnail', req.params.filename);
+  res.sendFile(filePath);
+}
+
 const playVideo = async(req, res) => {
   const videoPath = path.join(baseUrl, 'assets', 'foodVideos', req.params.filename);
   const stat = promisify(fs.stat);
@@ -64,5 +69,6 @@ const playVideo = async(req, res) => {
 
 module.exports = {
   "playVideo": playVideo,
-  "getPhoto": getPhoto
+  "getPhoto": getPhoto,
+  "getThumbnail": getThumbnail
 };
