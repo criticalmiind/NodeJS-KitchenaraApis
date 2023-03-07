@@ -4,11 +4,11 @@ module.exports = class Stores {
   constructor() { }
 
   getHomeCategories() {
-    return db.execute(`SELECT DISTINCT * FROM categories WHERE isHome = 1 GROUP BY catName`)
+    return db.execute(`SELECT DISTINCT * FROM categories WHERE isHome = 1`)
   }
 
   getPopularCategories() {
-    return db.execute(`SELECT DISTINCT * FROM categories WHERE isPopular = 1 GROUP BY catName`)
+    return db.execute(`SELECT DISTINCT * FROM categories WHERE isPopular = 1`)
   }
 
   getStoresByLatLng({ lat, lng, offset = 0, limit = 10, radius = 6371 }) {
