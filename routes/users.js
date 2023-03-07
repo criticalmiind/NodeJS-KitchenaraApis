@@ -12,7 +12,8 @@ const router = express.Router();
 router.get("/checkEmail/:email", userController.checkEmail);
 router.get("/checkUsername/:username", userController.checkUserName);
 router.get("/checkPhoneNumber/:number", userController.checkPhoneNumber);
-router.post("/singUp", [validate.signUp], userController.signUp);
+router.post("/singUp", [validate.signUp], userController.signUp1);
+router.post("/signup", [validate.signUp], userController.signUp);
 router.post("/login", userController.userLogin);
 router.post("/forgot/password", userController.forgotPassword);
 
