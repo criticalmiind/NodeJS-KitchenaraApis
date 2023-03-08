@@ -6,7 +6,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const baseUrl = require("../config/baseUrl");
-const { takeScreenshot, isEmailOrPhoneNumber } = require("../helper/other");
+const { takeScreenshot, isEmailOrPhoneNumber, getTimeDiff, shuffleArray } = require("../helper/other");
 const { sendMail } = require("../config/mail");
 
 let user = new Users();
@@ -347,26 +347,25 @@ const fetchALlVideos = async (req, res, next) => {
         if (result.length > 0) {
             result.forEach((rowsData) => {
                 let data = {
-                    foodId: rowsData.foodId,
-                    userId: rowsData.userId,
-                    thumbnail: rowsData.thumbnail,
-                    video: rowsData.video,
-                    videoDescription: rowsData.videoDescription,
-                    location: rowsData.location,
-                    commentsAllowed: rowsData.commentsAllowed,
-                    username: rowsData.username,
-                    profilePic: rowsData.profilePic,
-                    bio: rowsData.bio,
-                    userType: rowsData.userType,
-                    likes: rowsData.likes,
-                    comments: rowsData.comments,
+                    "foodId": rowsData.foodId,
+                    "userId": rowsData.userId,
+                    "thumbnail": rowsData.thumbnail,
+                    "video": rowsData.video,
+                    "videoDescription": rowsData.videoDescription,
+                    "location": rowsData.location,
+                    "commentsAllowed": rowsData.commentsAllowed,
+                    "username": rowsData.username,
+                    "profilePic": rowsData.profilePic,
+                    "userType": rowsData.userType,
+                    "likes": rowsData.likes,
+                    "comments": rowsData.comments,
+                    "time": getTimeDiff(rowsData.createdAt)
                 };
                 videos.push(data);
             });
-
-            return res.status(200).json({
-                videos: videos,
-            });
+            shuffleArray(videos)
+            
+            return res.status(200).json({ videos: videos });
         } else {
             return res.send({ code: 404, "d": req.data, message: "no data found" });
         }
@@ -389,19 +388,20 @@ const fetchUserVideos = async (req, res, next) => {
         if (result.length > 0) {
             result.forEach((rowsData) => {
                 let data = {
-                    foodId: rowsData.foodId,
-                    userId: rowsData.userId,
-                    thumbnail: rowsData.thumbnail,
-                    video: rowsData.video,
-                    videoDescription: rowsData.videoDescription,
-                    location: rowsData.location,
-                    commentsAllowed: rowsData.commentsAllowed,
-                    username: rowsData.username,
-                    profilePic: rowsData.profilePic,
-                    bio: rowsData.bio,
-                    userType: rowsData.userType,
-                    likes: rowsData.likes,
-                    comments: rowsData.comments,
+                    "foodId": rowsData.foodId,
+                    "userId": rowsData.userId,
+                    "thumbnail": rowsData.thumbnail,
+                    "video": rowsData.video,
+                    "videoDescription": rowsData.videoDescription,
+                    "location": rowsData.location,
+                    "commentsAllowed": rowsData.commentsAllowed,
+                    "username": rowsData.username,
+                    "profilePic": rowsData.profilePic,
+                    "bio": rowsData.bio,
+                    "userType": rowsData.userType,
+                    "likes": rowsData.likes,
+                    "comments": rowsData.comments,
+                    "time": getTimeDiff(rowsData.createdAt)
                 };
                 videos.push(data);
             });
