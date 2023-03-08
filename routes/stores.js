@@ -3,6 +3,7 @@ const storeController = require("../controller/stores");
 const router = express.Router();
 
 // Stores
+router.get("/get/by/id/:storeId", storeController.getStoreById);
 router.post("/list", storeController.getStores);
 router.get("/categories/:storeId", storeController.getStoresCategories);
 router.get("/food/items/:storeId", storeController.getStoresFoodItems);

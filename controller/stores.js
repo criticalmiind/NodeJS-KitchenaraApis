@@ -31,6 +31,33 @@ const getHomeData = async (req, res, next) => {
 }
 
 
+const getStoreById = async (req, res, next) => {
+  /**
+    * @dev the payload will contain following properties:
+    * - `storeId`
+    */
+
+  try {
+    let [result] = await stores.getStoresById(req.params.storeId);
+    if (result.length<1) return res.status(401).json({ "message": "no store found!" });
+    let data = {
+      "storeId": result[0]['userId'],
+      "username": result[0]['username'],
+      "fullName": result[0]['fullName'],
+      "email": result[0]['email'],
+      "phoneNumber": result[0]['phoneNumber'],
+      "profilePic": result[0]['profilePic'],
+      "location": result[0]['location'],
+      "storeAddress": result[0]['storeAddress'],
+      "distance": 0
+    }
+    return res.status(200).json({ "data": data });
+  } catch (error) {
+    return next({ code: 401, message: error + "" });
+  }
+}
+
+
 const getStores = async (req, res, next) => {
   /**
     * @dev the payload will contain following properties:
@@ -198,6 +225,7 @@ const getStoresByCategoryName = async (req, res, next) => {
 module.exports = {
   "getHomeData": getHomeData,
   "getStores": getStores,
+  "getStoreById": getStoreById,
   "getStoresCategories": getStoresCategories,
   "getStoresFoodItems": getStoresFoodItems,
   "getCategoryFoodItems": getCategoryFoodItems,

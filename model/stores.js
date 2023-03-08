@@ -25,6 +25,15 @@ module.exports = class Stores {
     `)
   }
 
+  getStoresById(storeId) {
+    return db.execute(`
+      SELECT * 
+      FROM users
+      WHERE userId = ${storeId} AND userType = 'store'
+      LIMIT 1;
+    `)
+  }
+
   getStoresCategories(userId) {
     return db.execute(`SELECT * FROM categories WHERE userId = ${userId};`)
   }
