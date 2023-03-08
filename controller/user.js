@@ -6,7 +6,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const baseUrl = require("../config/baseUrl");
-const { takeScreenshot, isEmailOrPhoneNumber, getTimeDiff, shuffleArray } = require("../helper/other");
+const { takeScreenshot, isEmailOrPhoneNumber, getTimeDiff, shuffleArray, generateToken } = require("../helper/other");
 const { sendMail } = require("../config/mail");
 
 let user = new Users();
@@ -101,56 +101,56 @@ const getUserProfile = async (req, res, next) => {
     }
 };
 
-const signUp1 = async (req, res, next) => {
-    /**
-       * @dev the payload will contain following properties:
-       * - `username`,
-       * - `phoneNumber`,
-       * - `password`,
-       */
-    let payload = req.body;
+// const signUp1 = async (req, res, next) => {
+//     /**
+//        * @dev the payload will contain following properties:
+//        * - `username`,
+//        * - `phoneNumber`,
+//        * - `password`,
+//        */
+//     let payload = req.body;
 
-    const errors = validationResult(req);
+//     const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-        return next({ code: 401, message: errors });
-    }
-    const salt = await bcrypt.genSalt(10);
-    payload.password = await bcrypt.hash(payload.password, salt);
-    if (payload.phoneNumber && payload.password) {
-        try {
-            payload['otp'] = Math.floor(1000 + Math.random() * 9000);
-            const d = await user.singUp(payload);
-            if (d) {
-                let userId = d.length > 0 ? d[0]['insertId'] : false
-                const [result] = await user.userProfileById(userId ? userId : payload.phoneNumber);
-                let data1 = {
-                    "userId": result[0].userId,
-                    "username": result[0].username,
-                    "email": result[0].email,
-                    "fullName": result[0].fullName,
-                    "phoneNumber": result[0].phoneNumber,
-                    "profilePic": result[0].profilePic,
-                    "bio": result[0].bio,
-                    "userType": result[0].userType,
-                    "location": result[0].location,
-                    "storeAddress": result[0].storeAddress,
-                    "userAddresses": [],
-                    "status": result[0].status,
-                }
+//     if (!errors.isEmpty()) {
+//         return next({ code: 401, message: errors });
+//     }
+//     const salt = await bcrypt.genSalt(10);
+//     payload.password = await bcrypt.hash(payload.password, salt);
+//     if (payload.phoneNumber && payload.password) {
+//         try {
+//             payload['otp'] = Math.floor(1000 + Math.random() * 9000);
+//             const d = await user.singUp(payload);
+//             if (d) {
+//                 let userId = d.length > 0 ? d[0]['insertId'] : false
+//                 const [result] = await user.userProfileById(userId ? userId : payload.phoneNumber);
+//                 let data1 = {
+//                     "userId": result[0].userId,
+//                     "username": result[0].username,
+//                     "email": result[0].email,
+//                     "fullName": result[0].fullName,
+//                     "phoneNumber": result[0].phoneNumber,
+//                     "profilePic": result[0].profilePic,
+//                     "bio": result[0].bio,
+//                     "userType": result[0].userType,
+//                     "location": result[0].location,
+//                     "storeAddress": result[0].storeAddress,
+//                     "userAddresses": [],
+//                     "status": result[0].status,
+//                 }
 
-                let { token } = await generateToken(data1)
-                return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
-            } else {
-                return next({ code: 404, message: "no data found" });
-            }
-        } catch (error) {
-            return next({ code: 401, message: error + "" });
-        }
-    } else {
-        return next({ code: 400, message: "No Request Found" });
-    }
-};
+//                 let { token } = await generateToken(data1)
+//                 return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
+//             } else {
+//                 return next({ code: 404, message: "no data found" });
+//             }
+//         } catch (error) {
+//             return next({ code: 401, message: error + "" });
+//         }
+//     } else {
+//         return next({ code: 400, message: "No Request Found" });
+//     }
+// };
 
 const signUp = async (req, res, next) => {
     /**
@@ -261,7 +261,7 @@ const logIn = async (req, res, next) => {
                 if (!check) {
                     return next({ code: 403, message: "Invalid Credentials" });
                 }
-                data.forEach((rowsData) => {
+                data.forEach(async(rowsData) => {
                     let data1 = {
                         userId: rowsData.userId,
                         username: rowsData.username,
@@ -275,17 +275,19 @@ const logIn = async (req, res, next) => {
                         storeAddress: rowsData.storeAddress,
                         status: rowsData.status,
                     };
-                    jwt.sign(
-                        { data1 },
-                        "secretKey",
-                        { expiresIn: "1d" },
-                        (err, token) => {
-                            if (err) {
-                                return res.status(401).json({ message: err });
-                            }
-                            return res.status(200).json({ "userInfo": data1, token: token });
-                        }
-                    );
+                    let { token } = await generateToken(data1)
+                    return res.status(200).json({ "userInfo": data1, token: token });
+                    // jwt.sign(
+                    //     { data1 },
+                    //     "secretKey",
+                    //     { expiresIn: "1d" },
+                    //     (err, token) => {
+                    //         if (err) {
+                    //             return res.status(401).json({ message: err });
+                    //         }
+                    //         return res.status(200).json({ "userInfo": data1, token: token });
+                    //     }
+                    // );
                 });
             } else {
                 return next({ code: 401, message: "Invalid Email or Password" });
@@ -566,22 +568,6 @@ const verifyOtp = async (req, res, next) => {
     }
 }
 
-function generateToken(data1) {
-    return new Promise((resolve, reject) => {
-        jwt.sign(
-            { data1 },
-            "secretKey",
-            { expiresIn: "1d" },
-            (err, token) => {
-                if (err) {
-                    reject({ "token": false });
-                }
-                resolve({ "token": token });
-            }
-        );
-    });
-}
-
 const submitOrder = async (req, res, next) => {
     /**
        * @dev the payload will contain following properties:
@@ -675,7 +661,7 @@ const getOrderStatus = async (req, res, next) => {
 module.exports = {
     "userLogin": logIn,
     "authentication": authentication,
-    "signUp1": signUp1,
+    // "signUp1": signUp1,
     "signUp": signUp,
     "forgotPassword": forgotPassword,
     "verifyOtp": verifyOtp,

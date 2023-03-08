@@ -19,8 +19,8 @@ module.exports = class Users {
         return db.execute(`SELECT * FROM  users where email = '${loginId}' OR phoneNumber = '${loginId}' OR username = '${loginId}';`);
     }
 
-    singUp({ username, phoneNumber='', password, otp, userType, email='' }) {
-        return db.execute(`INSERT INTO users SET username = '${username}', email = '${email}', phoneNumber = '${phoneNumber}', password = '${password}', otp = ${otp}, userType = '${userType ? userType : 'user'}', status=0`);
+    singUp({ username, phoneNumber='', fullName, password, otp=null, userType, email='', status=0, profilePic=null }) {
+        return db.execute(`INSERT INTO users SET username = '${username}', fullName = '${fullName?fullName:username}', email = '${email}', phoneNumber = '${phoneNumber}', profilePic = '${profilePic}', password = '${password}', otp = ${otp}, userType = '${userType ? userType : 'user'}', status=${status}`);
     }
 
     updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location, storeAddress }, userId) {

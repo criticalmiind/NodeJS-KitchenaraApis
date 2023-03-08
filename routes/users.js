@@ -1,7 +1,7 @@
 const express = require("express");
 const auth = require("../middleware/validation");
 const userController = require("../controller/user");
-const storeController = require("../controller/stores");
+const googleController = require("../controller/google_auth");
 const commentsController = require("../controller/comments");
 const followingController = require("../controller/following");
 const validate = require("../helper/validate");
@@ -9,10 +9,12 @@ const uploadVideo = require("../helper/uploadVideo");
 const uploadPhoto = require("../helper/uploadPhoto");
 const router = express.Router();
 
+router.post("/google/signup", googleController.signUp);
+router.post("/google/signin", googleController.signIn);
 router.get("/checkEmail/:email", userController.checkEmail);
 router.get("/checkUsername/:username", userController.checkUserName);
 router.get("/checkPhoneNumber/:number", userController.checkPhoneNumber);
-router.post("/singUp", [validate.signUp], userController.signUp1);
+// router.post("/singUp", [validate.signUp], userController.signUp1);
 router.post("/signup", [validate.signUp], userController.signUp);
 router.post("/login", userController.userLogin);
 router.post("/forgot/password", userController.forgotPassword);

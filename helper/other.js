@@ -2,6 +2,24 @@ const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
 const baseUrl = require('../config/baseUrl');
+const jwt = require("jsonwebtoken");
+
+function generateToken(data1) {
+    return new Promise((resolve, reject) => {
+        jwt.sign(
+            { data1 },
+            "secretKey",
+            { expiresIn: "1d" },
+            (err, token) => {
+                if (err) {
+                    reject({ "token": false });
+                }
+                resolve({ "token": token });
+            }
+        );
+    });
+}
+
 
 function takeScreenshot(name) {
     return new Promise((resolve, reject) => {
@@ -92,5 +110,6 @@ module.exports = {
     "takeScreenshot": takeScreenshot,
     "isEmailOrPhoneNumber": isEmailOrPhoneNumber,
     "getTimeDiff": getTimeDiff,
-    "shuffleArray": shuffleArray
+    "shuffleArray": shuffleArray,
+    "generateToken": generateToken
 }
