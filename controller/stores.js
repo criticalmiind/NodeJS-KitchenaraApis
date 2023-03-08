@@ -10,11 +10,15 @@ const getHomeData = async (req, res, next) => {
     return res.status(200).json({
       "data": {
         "popular": popular.map((e) => ({
+          "catId": e.catId,
+          "storeId": e.userId,
           "catName": e.catName,
           "catDescription": e.catDescription,
           "catImage": e.catImage,
         })),
         "home": home.map((e) => ({
+          "catId": e.catId,
+          "storeId": e.userId,
           "catName": e.catName,
           "catDescription": e.catDescription,
           "catImage": e.catImage
