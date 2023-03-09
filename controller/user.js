@@ -101,57 +101,6 @@ const getUserProfile = async (req, res, next) => {
     }
 };
 
-// const signUp1 = async (req, res, next) => {
-//     /**
-//        * @dev the payload will contain following properties:
-//        * - `username`,
-//        * - `phoneNumber`,
-//        * - `password`,
-//        */
-//     let payload = req.body;
-
-//     const errors = validationResult(req);
-
-//     if (!errors.isEmpty()) {
-//         return next({ code: 401, message: errors });
-//     }
-//     const salt = await bcrypt.genSalt(10);
-//     payload.password = await bcrypt.hash(payload.password, salt);
-//     if (payload.phoneNumber && payload.password) {
-//         try {
-//             payload['otp'] = Math.floor(1000 + Math.random() * 9000);
-//             const d = await user.singUp(payload);
-//             if (d) {
-//                 let userId = d.length > 0 ? d[0]['insertId'] : false
-//                 const [result] = await user.userProfileById(userId ? userId : payload.phoneNumber);
-//                 let data1 = {
-//                     "userId": result[0].userId,
-//                     "username": result[0].username,
-//                     "email": result[0].email,
-//                     "fullName": result[0].fullName,
-//                     "phoneNumber": result[0].phoneNumber,
-//                     "profilePic": result[0].profilePic,
-//                     "bio": result[0].bio,
-//                     "userType": result[0].userType,
-//                     "location": result[0].location,
-//                     "storeAddress": result[0].storeAddress,
-//                     "userAddresses": [],
-//                     "status": result[0].status,
-//                 }
-
-//                 let { token } = await generateToken(data1)
-//                 return res.status(200).json({ "token": token, "message": "Registered Successfully! Please Verify Otp!", "otp": payload['otp'] });
-//             } else {
-//                 return next({ code: 404, message: "no data found" });
-//             }
-//         } catch (error) {
-//             return next({ code: 401, message: error + "" });
-//         }
-//     } else {
-//         return next({ code: 400, message: "No Request Found" });
-//     }
-// };
-
 const signUp = async (req, res, next) => {
     /**
        * @dev the payload will contain following properties:

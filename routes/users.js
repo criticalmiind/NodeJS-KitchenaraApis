@@ -1,6 +1,7 @@
 const express = require("express");
 const auth = require("../middleware/validation");
 const userController = require("../controller/user");
+const userRequestsController = require("../controller/userRequests");
 const googleController = require("../controller/google_auth");
 const commentsController = require("../controller/comments");
 const followingController = require("../controller/following");
@@ -14,7 +15,6 @@ router.post("/google/signin", googleController.signIn);
 router.get("/checkEmail/:email", userController.checkEmail);
 router.get("/checkUsername/:username", userController.checkUserName);
 router.get("/checkPhoneNumber/:number", userController.checkPhoneNumber);
-// router.post("/singUp", [validate.signUp], userController.signUp1);
 router.post("/signup", [validate.signUp], userController.signUp);
 router.post("/login", userController.userLogin);
 router.post("/forgot/password", userController.forgotPassword);
@@ -52,6 +52,8 @@ router.get("/get/orders/:filter", auth, userController.getOrdersList);
 router.get("/get/order/by/id/:orderId", auth, userController.getOrderById);
 router.get("/get/order/status/:orderId", auth, userController.getOrderStatus);
 
+// Requests
+router.post("/submit/request", auth, userRequestsController.submitRequest);
 
 
 module.exports = router;
