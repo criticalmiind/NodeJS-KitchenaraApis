@@ -66,7 +66,7 @@ const fetchFoodPostComments = async (req, res, next) => {
   let { foodId } = req.params;
 
   try {
-    const [result] = await commentInstance.fetchFoodPostComments(foodId);
+    const [result] = await commentInstance.fetchFoodPostComments(foodId, req.userId);
     let commentsList = []
     result.forEach(el => {
       commentsList.push({
@@ -78,6 +78,7 @@ const fetchFoodPostComments = async (req, res, next) => {
         "username": el.username,
         "fullName": el.fullName,
         "profilePic": el.profilePic,
+        "isLiked": el.isLiked,
         "time": getTimeDiff(el.createdAt),
       })
     });

@@ -38,7 +38,7 @@ router.get("/video/like/unlike/:foodId", auth, userController.likeUnlikeFoodPost
 router.post("/video/comment", auth, commentsController.commentPost);
 router.post("/video/update/comment", auth, commentsController.updateComment);
 router.get("/video/delete/comment/:commentId", auth, commentsController.deleteComment);
-router.get("/video/fetch/comments/:foodId", auth, commentsController.fetchFoodPostComments);
+router.get("/video/fetch/comments/:foodId", pass_session, commentsController.fetchFoodPostComments);
 router.get("/video/comment/like/unlike/:commentId", auth, commentsController.likeUnlikeComment);
 
 // Follow/Unfollow

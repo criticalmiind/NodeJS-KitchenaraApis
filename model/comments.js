@@ -3,10 +3,11 @@ const db = require("../config/database");
 module.exports = class Comments {
   constructor() { }
 
-  fetchFoodPostComments(foodId) {
+  fetchFoodPostComments(foodId, userId) {
     return db.execute(`
     SELECT c.*, u.*,
-    (SELECT COUNT(*) FROM commentsliked cl WHERE cl.commentId = c.commentId) AS likes
+    (SELECT COUNT(*) FROM commentsliked cl WHERE cl.commentId = c.commentId) AS likes, 
+    CASE WHEN li.userId = '${userId}' THEN true ELSE false END AS isLiked
     FROM comments c
     JOIN users u ON c.userId = u.userId
     WHERE c.foodId = ${foodId}`);
