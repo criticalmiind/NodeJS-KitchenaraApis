@@ -86,7 +86,6 @@ module.exports = class Users {
             INNER JOIN foodposts fp ON fp.userId = u.userId
             LEFT JOIN likeditems li ON li.foodId = fp.foodId
             LEFT JOIN comments c ON c.foodId = fp.foodId
-            GROUP BY fp.foodId
             ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`;
         return db.execute(query)
     }
