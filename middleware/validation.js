@@ -15,7 +15,7 @@ module.exports = function verifyToken(req, res, next) {
   req.token = bearerToken;
   jwt.verify(req.token, "secretKey", (err, data) => {
     if (err) {
-      return next({ code: 403, message: err || "Access denied" });
+      return next({ code: 403, message: "Access denied" });
     }
     req.data = data;
     next();
