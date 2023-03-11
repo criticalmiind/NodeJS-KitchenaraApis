@@ -1,5 +1,6 @@
 const express = require("express");
 const auth = require("../middleware/validation");
+const pass_session = require("../middleware/identify_session");
 const userController = require("../controller/user");
 const userRequestsController = require("../controller/userRequests");
 const googleController = require("../controller/google_auth");
@@ -29,7 +30,7 @@ router.get("/get/profile", auth, userController.getUserProfile);
 // Videos
 router.post("/uploadVideo", auth, uploadVideo, userController.uploadVideo);
 router.post("/upload/thumbnail", auth, uploadPhoto, userController.uploadVideoThumbnail);
-router.get("/browseVideos/limit/:limit/offset/:offset", userController.fetchALlVideos);
+router.get("/browseVideos/limit/:limit/offset/:offset", pass_session, userController.fetchALlVideos);
 router.get("/fetch/videos/limit/:limit/offset/:offset", auth, userController.fetchUserVideos);
 
 // Comments, Likes

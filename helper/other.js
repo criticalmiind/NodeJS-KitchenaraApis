@@ -9,7 +9,7 @@ function generateToken(data1) {
         jwt.sign(
             { data1 },
             "secretKey",
-            { expiresIn: "1d" },
+            { expiresIn: "10d" },
             (err, token) => {
                 if (err) {
                     reject({ "token": false });

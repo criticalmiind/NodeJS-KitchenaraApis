@@ -5,7 +5,7 @@ module.exports = function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
   //   checking
 
-  if (!bearerHeader) return next({ code: 403, message: "Header Missing" });
+  if (!bearerHeader) return next({ code: 403, message: "User Authorization string is required in header!" });
 
   //split at space
   const bearer = bearerHeader.split(" ");

@@ -19,8 +19,8 @@ module.exports = class Users {
         return db.execute(`SELECT * FROM  users where email = '${loginId}' OR phoneNumber = '${loginId}' OR username = '${loginId}';`);
     }
 
-    singUp({ username, phoneNumber='', fullName, password, otp=null, userType, email='', status=0, profilePic=null }) {
-        return db.execute(`INSERT INTO users SET username = '${username}', fullName = '${fullName?fullName:username}', email = '${email}', phoneNumber = '${phoneNumber}', profilePic = '${profilePic}', password = '${password}', otp = ${otp}, userType = '${userType ? userType : 'user'}', status=${status}`);
+    singUp({ username, phoneNumber = '', fullName, password, otp = null, userType, email = '', status = 0, profilePic = null }) {
+        return db.execute(`INSERT INTO users SET username = '${username}', fullName = '${fullName ? fullName : username}', email = '${email}', phoneNumber = '${phoneNumber}', profilePic = '${profilePic}', password = '${password}', otp = ${otp}, userType = '${userType ? userType : 'user'}', status=${status}`);
     }
 
     updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location, storeAddress, userAddresses }, userId) {
@@ -68,7 +68,7 @@ module.exports = class Users {
     }
 
 
-    uploadVideo({ userId, thumbnail=null, videoDescription=null, location, commentsAllowed }, video) {
+    uploadVideo({ userId, thumbnail = null, videoDescription = null, location, commentsAllowed }, video) {
         return db.execute(`INSERT INTO  foodposts SET userId = ${userId}, thumbnail='${thumbnail}', videoDescription = '${videoDescription}',location = '${location}',commentsAllowed = ${commentsAllowed}, video = '${video}'`);
     }
 
@@ -77,15 +77,18 @@ module.exports = class Users {
         return db.execute(query);
     }
 
-    fetchALlVideos(limit = 10, offset = 0) {
-        return db.execute(`
-    SELECT u.*, fp.*, COUNT(li.likesId) AS likes, COUNT(comment.commentId) AS comments
-    FROM users u
-    INNER JOIN foodposts fp ON fp.userId = u.userId
-    LEFT JOIN likeditems li ON li.foodId = fp.foodId
-    LEFT JOIN comments comment ON comment.foodId = fp.foodId
-    GROUP BY fp.foodId
-    ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`)
+    fetchALlVideos(userId='', limit = 10, offset = 0) {
+        let query = `SELECT u.*, fp.*, 
+                COUNT(li.likesId) AS likes, 
+                COUNT(c.commentId) AS comments, 
+                CASE WHEN li.userId = '${userId}' THEN true ELSE false END AS isLiked
+            FROM users u
+            INNER JOIN foodposts fp ON fp.userId = u.userId
+            LEFT JOIN likeditems li ON li.foodId = fp.foodId
+            LEFT JOIN comments c ON c.foodId = fp.foodId
+            GROUP BY fp.foodId
+            ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`;
+        return db.execute(query)
     }
 
     fetchUserVideos(userId, limit = 10, offset = 0) {

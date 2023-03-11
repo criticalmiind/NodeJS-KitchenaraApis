@@ -294,7 +294,7 @@ const fetchALlVideos = async (req, res, next) => {
     try {
         const videos = [];
         const { limit, offset } = req.params
-        const [result] = await user.fetchALlVideos(limit, offset);
+        const [result] = await user.fetchALlVideos(req.userId, limit, offset);
         if (result.length > 0) {
             result.forEach((rowsData) => {
                 let data = {
@@ -310,7 +310,8 @@ const fetchALlVideos = async (req, res, next) => {
                     "userType": rowsData.userType,
                     "likes": rowsData.likes,
                     "comments": rowsData.comments,
-                    "time": getTimeDiff(rowsData.createdAt)
+                    "time": getTimeDiff(rowsData.createdAt),
+                    "isLiked": rowsData.isLiked
                 };
                 videos.push(data);
             });
