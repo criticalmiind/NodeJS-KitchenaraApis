@@ -127,8 +127,9 @@ const signUp = async (req, res, next) => {
                     "text": `Hey @${payload['username']}!\nThis is your otp code: ${payload['otp']}\nNote: don't your otp to anyone!`
                 })
             }
-            // if(type == 'phoneNumber'){
-            // }
+            if(type == 'phoneNumber'){
+                return next({ code: 401, message: "Phone sms api not working temporary please use email to signup!" });
+            }
             if (!type) return res.status(401).json({ "message": "Inavlid phone/email! please try again!" });
             payload[type] = payload['login']
 
@@ -136,25 +137,18 @@ const signUp = async (req, res, next) => {
             if (d) {
                 let userId = d.length > 0 ? d[0]['insertId'] : false
                 const [result] = await user.userProfileById(userId ? userId : payload.login);
-                let data1 = {
-                    "userId": result[0].userId,
-                    "username": result[0].username,
-                    "email": result[0].email,
-                    "fullName": result[0].fullName,
-                    "phoneNumber": result[0].phoneNumber,
-                    "profilePic": result[0].profilePic,
-                    "bio": result[0].bio,
-                    "userType": result[0].userType,
-                    "location": result[0].location,
-                    "storeAddress": result[0].storeAddress,
-                    "userAddresses": [],
-                    "status": result[0].status,
-                }
 
-                let { token } = await generateToken(data1)
+                let uAddress = result[0]['userAddresses']
+                let data = result[0]
+                data['userAddresses'] = (uAddress && uAddress != '') ? JSON.parse(uAddress) : []
+                if (data.userType != 'user') delete (data['userAddresses'])
+                delete (data['password'])
+                delete (data['otp'])
+
+                let { token } = await generateToken(data)
                 return res.status(200).json({ "token": token, "message": `Registered Successfully! Please check your ${type == 'email' ? 'email' : 'phone'} for Otp!`, "otp": payload['otp'] });
             } else {
-                return next({ code: 404, message: "no data found" });
+                return next({ code: 401, message: "server not responding" });
             }
         } catch (error) {
             return next({ code: 401, message: error + "" });
@@ -199,50 +193,27 @@ const updateProfile = async (req, res, next) => {
 
 const logIn = async (req, res, next) => {
     let email = req.body.email;
-
     let password = req.body.password;
-
     if (email && password) {
         try {
-            const [data] = await user.logIn(email);
-            if (data.length > 0) {
-                let check = await bcrypt.compare(password, data[0].password);
-                if (!check) {
-                    return next({ code: 403, message: "Invalid Credentials" });
-                }
-                data.forEach(async(rowsData) => {
-                    let data1 = {
-                        userId: rowsData.userId,
-                        username: rowsData.username,
-                        email: rowsData.email,
-                        fullName: rowsData.fullName,
-                        phoneNumber: rowsData.phoneNumber,
-                        profilePic: rowsData.profilePic,
-                        bio: rowsData.bio,
-                        userType: rowsData.userType,
-                        location: rowsData.location,
-                        storeAddress: rowsData.storeAddress,
-                        status: rowsData.status,
-                    };
-                    let { token } = await generateToken(data1)
-                    return res.status(200).json({ "userInfo": data1, token: token });
-                    // jwt.sign(
-                    //     { data1 },
-                    //     "secretKey",
-                    //     { expiresIn: "1d" },
-                    //     (err, token) => {
-                    //         if (err) {
-                    //             return res.status(401).json({ message: err });
-                    //         }
-                    //         return res.status(200).json({ "userInfo": data1, token: token });
-                    //     }
-                    // );
-                });
+            const [result] = await user.logIn(email);
+            if (result.length > 0) {
+                let check = await bcrypt.compare(password, result[0].password);
+                if (!check) return next({ code: 401, message: "Invalid Credentials" });
+
+                let uAddress = result[0]['userAddresses']
+                let data = result[0]
+                data['userAddresses'] = (uAddress && uAddress != '') ? JSON.parse(uAddress) : []
+                if (data.userType != 'user') delete (data['userAddresses'])
+                delete (data['password'])
+                delete (data['otp'])
+                let { token } = await generateToken(data)
+                return res.status(200).json({ "userInfo": data, "token": token });
             } else {
-                return next({ code: 401, message: "Invalid Email or Password" });
+                return next({ code: 401, message: "Invalid Credentials" });
             }
         } catch (err) {
-            return next({ code: 401, message: err });
+            return next({ code: 401, message: err+"" });
         }
     } else {
         return next({ code: 400, message: "No Request Found" });

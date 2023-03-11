@@ -57,7 +57,7 @@ function isEmailOrPhoneNumber(input) {
     }
 
     // Check if input is a valid phone number
-    const phoneRegex = /^\d{10}$/;
+    // const phoneRegex = /^\d{10}$/;
     const saudiRegex = /^((\+|00)966|0)?5[0-9]{8}$/;
     if (saudiRegex.test(input)) {
         return 'phoneNumber';
