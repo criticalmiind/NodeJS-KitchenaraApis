@@ -277,6 +277,7 @@ const fetchALlVideos = async (req, res, next) => {
                     "location": rowsData.location,
                     "commentsAllowed": rowsData.commentsAllowed,
                     "username": rowsData.username,
+                    "fullName": rowsData.fullName,
                     "profilePic": rowsData.profilePic,
                     "userType": rowsData.userType,
                     "likes": rowsData.likes,
