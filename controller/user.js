@@ -311,7 +311,7 @@ const fetchALlVideos = async (req, res, next) => {
                     "likes": rowsData.likes,
                     "comments": rowsData.comments,
                     "time": getTimeDiff(rowsData.createdAt),
-                    "isLiked": rowsData.isLiked
+                    "isLiked": rowsData.isLiked?true:false
                 };
                 videos.push(data);
             });
