@@ -447,7 +447,7 @@ const likeUnlikeFoodPost = async (req, res, next) => {
             return res.status(200).json({ message: "Video Unliked" });
         }
     } catch (error) {
-        return next({ code: 401, message: error });
+        return next({ code: 401, message: error+"" });
     }
 };
 

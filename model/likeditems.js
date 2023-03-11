@@ -1,1 +1,17 @@
-function _0x4618(){const _0x29b7e7=['284560ftNrhE','\x0a\x20\x20\x20\x20\x20\x20INSERT\x20INTO\x20orderdetails\x20(tackingId,\x20userId,\x20storeId,\x20deliveryAddress,\x20deliveryLocation,\x20totalBill,\x20paymentMethod,\x20isPayed,\x20json)\x0a\x20\x20\x20\x20\x20\x20VALUES\x20(UPPER(REPLACE(SUBSTRING(UUID(),\x201,\x208),\x20\x27-\x27,\x20\x27\x27)),\x20','20356xUBPig','all','591762oaBPiQ','stringify','483218wgfuqb','SELECT\x20*\x20FROM\x20orderdetails\x20WHERE\x20orderId\x20=\x20','exports','submitOrder','21CesYzJ','5577700IqCosa','SELECT\x20*\x20FROM\x20orderdetails\x20WHERE\x20userId\x20=\x20','\x27,\x20','22476670mIJzRV','903SLquRV','getOrderById',',\x20\x27','execute','../config/database','\x20AND\x20status\x20=\x20\x27','7332328olsZwy','9wmtCFf','getOrdersByUserId'];_0x4618=function(){return _0x29b7e7;};return _0x4618();}const _0x28c29c=_0x1958;(function(_0x241db4,_0x79ccab){const _0x5cad1f=_0x1958,_0x3b6bb2=_0x241db4();while(!![]){try{const _0x8248a6=-parseInt(_0x5cad1f(0x1a7))/0x1+-parseInt(_0x5cad1f(0x1a1))/0x2+parseInt(_0x5cad1f(0x1b0))/0x3*(parseInt(_0x5cad1f(0x1a3))/0x4)+-parseInt(_0x5cad1f(0x1ac))/0x5+-parseInt(_0x5cad1f(0x1a5))/0x6*(parseInt(_0x5cad1f(0x1ab))/0x7)+parseInt(_0x5cad1f(0x19e))/0x8*(-parseInt(_0x5cad1f(0x19f))/0x9)+parseInt(_0x5cad1f(0x1af))/0xa;if(_0x8248a6===_0x79ccab)break;else _0x3b6bb2['push'](_0x3b6bb2['shift']());}catch(_0x322449){_0x3b6bb2['push'](_0x3b6bb2['shift']());}}}(_0x4618,0xc9a8c));const db=require(_0x28c29c(0x1b4));function _0x1958(_0x2cd4dd,_0x16928a){const _0x461874=_0x4618();return _0x1958=function(_0x1958de,_0x598cdd){_0x1958de=_0x1958de-0x19e;let _0x4e9b8a=_0x461874[_0x1958de];return _0x4e9b8a;},_0x1958(_0x2cd4dd,_0x16928a);}module[_0x28c29c(0x1a9)]=class OrderDetails{constructor(){}[_0x28c29c(0x1aa)]({userId:_0x995321,storeId:_0x4bf19f,deliveryAddress:_0x5c90f3,deliveryLocation:_0xcf76ee,totalBill:_0x510117,paymentMethod:_0x24877d,isPayed:_0x5e0ef3,json:_0x54018c}){const _0x35652a=_0x28c29c;return db[_0x35652a(0x1b3)](_0x35652a(0x1a2)+_0x995321+',\x20'+_0x4bf19f+_0x35652a(0x1b2)+_0x5c90f3+'\x27,\x20\x27'+_0xcf76ee+_0x35652a(0x1ae)+_0x510117+',\x20\x27'+_0x24877d+_0x35652a(0x1ae)+_0x5e0ef3+_0x35652a(0x1b2)+JSON[_0x35652a(0x1a6)](_0x54018c)+'\x27);\x0a\x20\x20\x20\x20');}[_0x28c29c(0x1a0)](_0x2bac63,_0x1b83aa=_0x28c29c(0x1a4)){const _0x10be2b=_0x28c29c;if(_0x1b83aa==_0x10be2b(0x1a4))return db[_0x10be2b(0x1b3)](_0x10be2b(0x1ad)+_0x2bac63+';');else return db[_0x10be2b(0x1b3)](_0x10be2b(0x1ad)+_0x2bac63+_0x10be2b(0x1b5)+_0x1b83aa+'\x27;');}[_0x28c29c(0x1b1)](_0x51c7bd){const _0x576a21=_0x28c29c;return db['execute'](_0x576a21(0x1a8)+_0x51c7bd);}};
+const db = require("../config/database");
+
+module.exports = class likeditems {
+  constructor() { }
+
+  is_already_liked(userId, foodId) {
+    return db.execute(`SELECT * FROM likeditems where userId = ${userId} AND foodId = ${foodId}`);
+  }
+
+  like(userId, foodId) {
+    return db.execute(`INSERT INTO likeditems SET userId = ${userId}, foodId = ${foodId}, status = 1`);
+  }
+
+  undo_like(userId, foodId) {
+    return db.execute(`DELETE FROM likeditems WHERE userId = ${userId} AND foodId = ${foodId}`);
+  }
+};
