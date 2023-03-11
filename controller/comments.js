@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const baseUrl = require("../config/baseUrl");
+const { getTimeDiff } = require("../helper/other");
 
 let commentInstance = new Comments();
 let commentLikedIns = new CommentsLiked();
@@ -76,7 +77,8 @@ const fetchFoodPostComments = async (req, res, next) => {
         "likes": el.likes,
         "username": el.username,
         "fullName": el.fullName,
-        "profilePic": el.profilePic
+        "profilePic": el.profilePic,
+        "time": getTimeDiff(el.createdAt),
       })
     });
     return res.status(200).json({ data: commentsList });
