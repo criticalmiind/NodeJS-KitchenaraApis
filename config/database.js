@@ -6,9 +6,9 @@ var pool = mysql.createPool({
   password: "12345678",
   database: "kitchenara",
   
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "kitchenara",
+  // host: "localhost",
+  // user: "root",
+  // password: "",
+  // database: "kitchenara",
 });
 module.exports = pool.promise();
