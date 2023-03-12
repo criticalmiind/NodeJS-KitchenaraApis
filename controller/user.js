@@ -76,7 +76,7 @@ const getUserProfileById = async (req, res, next) => {
             return next({ code: 401, message: "no user profile found!" });
         }
     } catch (error) {
-        return next({ code: 401, message: error });
+        return next({ code: 401, message: error+"" });
     }
 };
 
