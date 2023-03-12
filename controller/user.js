@@ -127,7 +127,7 @@ const signUp = async (req, res, next) => {
                     "text": `Hey @${payload['username']}!\nThis is your otp code: ${payload['otp']}\nNote: don't your otp to anyone!`
                 })
             }
-            if(type == 'phoneNumber'){
+            if (type == 'phoneNumber') {
                 return next({ code: 401, message: "Phone sms api not working temporary please use email to signup!" });
             }
             if (!type) return res.status(401).json({ "message": "Inavlid phone/email! please try again!" });
@@ -213,7 +213,7 @@ const logIn = async (req, res, next) => {
                 return next({ code: 401, message: "Invalid Credentials" });
             }
         } catch (err) {
-            return next({ code: 401, message: err+"" });
+            return next({ code: 401, message: err + "" });
         }
     } else {
         return next({ code: 400, message: "No Request Found" });
@@ -283,12 +283,12 @@ const fetchALlVideos = async (req, res, next) => {
                     "likes": rowsData.likes,
                     "comments": rowsData.comments,
                     "time": getTimeDiff(rowsData.createdAt),
-                    "isLiked": rowsData.isLiked?true:false
+                    "isLiked": rowsData.isLiked ? true : false
                 };
                 videos.push(data);
             });
             shuffleArray(videos)
-            
+
             return res.status(200).json({ videos: videos });
         } else {
             return res.send({ code: 404, "d": req.data, message: "no data found" });
@@ -326,6 +326,7 @@ const fetchUserVideos = async (req, res, next) => {
                     "userType": rowsData.userType,
                     "likes": rowsData.likes,
                     "comments": rowsData.comments,
+                    "isLiked": rowsData.isLiked,
                     "time": getTimeDiff(rowsData.createdAt)
                 };
                 videos.push(data);
@@ -418,7 +419,7 @@ const likeUnlikeFoodPost = async (req, res, next) => {
             return res.status(200).json({ message: "Video Unliked" });
         }
     } catch (error) {
-        return next({ code: 401, message: error+"" });
+        return next({ code: 401, message: error + "" });
     }
 };
 
