@@ -326,7 +326,7 @@ const fetchUserVideos = async (req, res, next) => {
                     "userType": rowsData.userType,
                     "likes": rowsData.likes,
                     "comments": rowsData.comments,
-                    "isLiked": rowsData.isLiked,
+                    "isLiked": rowsData.isLiked?true:false,
                     "time": getTimeDiff(rowsData.createdAt)
                 };
                 videos.push(data);
