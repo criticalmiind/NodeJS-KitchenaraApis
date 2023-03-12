@@ -5,6 +5,7 @@ var pool = mysql.createPool({
   user: "phpmyadmin",
   password: "12345678",
   database: "kitchenara",
+
   // host: "localhost",
   // user: "root",
   // password: "",

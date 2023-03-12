@@ -303,12 +303,13 @@ const fetchUserVideos = async (req, res, next) => {
      * @dev the payload will contain following properties:
      * - `limit`,
      * - `offset`,
+     * - `profileId`
      */
     try {
         const videos = [];
-        const { userId } = req.data.data1
-        const { limit, offset } = req.params
-        const [result] = await user.fetchUserVideos(userId, limit, offset);
+        // const { userId } = req?.data?.data1
+        const { limit, offset, profileId } = req.params
+        const [result] = await user.fetchUserVideos(req.userId, profileId, limit, offset);
         if (result.length > 0) {
             result.forEach((rowsData) => {
                 let data = {
@@ -330,11 +331,9 @@ const fetchUserVideos = async (req, res, next) => {
                 videos.push(data);
             });
 
-            return res.status(200).json({
-                videos: videos,
-            });
+            return res.status(200).json({ videos: videos });
         } else {
-            return res.send({ code: 404, "d": req.data, message: "no data found" });
+            return res.status(200).json({ videos: [] });
         }
     } catch (error) {
         return next({ code: 401, message: error + "" });

@@ -31,7 +31,8 @@ router.get("/get/profile", auth, userController.getUserProfile);
 router.post("/uploadVideo", auth, uploadVideo, userController.uploadVideo);
 router.post("/upload/thumbnail", auth, uploadPhoto, userController.uploadVideoThumbnail);
 router.get("/browseVideos/limit/:limit/offset/:offset", pass_session, userController.fetchALlVideos);
-router.get("/fetch/videos/limit/:limit/offset/:offset", auth, userController.fetchUserVideos);
+// router.get("/fetch/videos//limit/:limit/offset/:offset", auth, userController.fetchUserVideos);
+router.get("/fetch/videos/:profileId/limit/:limit/offset/:offset", pass_session, userController.fetchUserVideos);
 
 // Comments, Likes
 router.get("/video/like/unlike/:foodId", auth, userController.likeUnlikeFoodPost);

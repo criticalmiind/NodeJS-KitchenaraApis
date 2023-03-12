@@ -72,29 +72,35 @@ function getTimeDiff(date1_str) {
     let date2_str = new Date().toISOString(); // Current date and time
 
     // Convert the strings to Date objects
-    let date1 = new Date(date1_str);
+    let date1 = new Date(date1_str.toISOString());
     let date2 = new Date(date2_str);
 
     // Calculate the time difference in milliseconds
-    let diff_ms = Math.abs(date2 - date1);
+    const diff_ms = Math.abs(date2 - date1);
 
     // Convert milliseconds to hours, days, weeks, etc.
-    let diff_hours = Math.floor(diff_ms / 3600000);
-    let diff_days = Math.floor(diff_hours / 24);
-    let diff_weeks = Math.floor(diff_days / 7);
-    let diff_months = Math.floor(diff_weeks / 4.34524); // Assuming 4.34524 weeks in a month
+    const diff_seconds = Math.floor(diff_ms / 1000);
+    const diff_minutes = Math.floor(diff_seconds / 60);
+    const diff_hours = Math.floor(diff_minutes / 60);
+    const diff_days = Math.floor(diff_hours / 24);
+    const diff_weeks = Math.floor(diff_days / 7);
+    const diff_months = Math.floor(diff_days / 30);
+    const diff_years = Math.floor(diff_months / 12);
 
-    // Display the result in the appropriate format
-    if (diff_hours < 1) {
+    if (diff_seconds < 60) {
         return "Just Now"
+    } else if (diff_minutes < 60) {
+        return diff_minutes + " Minutes ago"
     } else if (diff_hours < 24) {
         return diff_hours + " Hours ago"
     } else if (diff_days < 7) {
         return (diff_days + " Days ago");
-    } else if (diff_weeks < 4.34524) {
+    } else if (diff_weeks < 4) {
         return (diff_weeks + " Weeks ago");
-    } else {
+    } else if (diff_months < 12) {
         return (diff_months + " Months ago");
+    } else {
+        return (diff_years + " Years ago");
     }
 }
 

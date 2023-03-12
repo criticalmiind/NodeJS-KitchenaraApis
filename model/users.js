@@ -77,7 +77,7 @@ module.exports = class Users {
         return db.execute(query);
     }
 
-    fetchALlVideos(userId='', limit = 10, offset = 0) {
+    fetchALlVideos(userId = '', limit = 10, offset = 0) {
         let query = `
             SELECT u.*, fp.*, 
                 COUNT(li.likesId) AS likes, 
@@ -89,28 +89,22 @@ module.exports = class Users {
             LEFT JOIN comments c ON c.foodId = fp.foodId
             GROUP BY fp.foodId, u.userId, li.likesId, c.commentId
             ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`
-        // SELECT u.*, fp.*, 
-        //         COUNT(li.likesId) AS likes, 
-        //         COUNT(c.commentId) AS comments, 
-        //         CASE WHEN li.userId = '${userId}' THEN true ELSE false END AS isLiked
-        //     FROM users u
-        //     INNER JOIN foodposts fp ON fp.userId = u.userId
-        //     LEFT JOIN likeditems li ON li.foodId = fp.foodId
-        //     LEFT JOIN comments c ON c.foodId = fp.foodId
-        //     GROUP BY fp.foodId
-        //     ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`;
         return db.execute(query)
     }
 
-    fetchUserVideos(userId, limit = 10, offset = 0) {
-        return db.execute(`
-            SELECT u.*, fp.*, COUNT(li.likesId) AS likes, COUNT(comment.commentId) AS comments
+    fetchUserVideos(sessionUserId='', userId, limit = 10, offset = 0) {
+        let query = `
+            SELECT DISTINCT u.*, fp.*, 
+                COUNT(li.likesId) AS likes, 
+                (SELECT COUNT(*) FROM comments cl WHERE cl.foodId = fp.foodId) AS comments, 
+                CASE WHEN li.userId = '${sessionUserId}' THEN true ELSE false END AS isLiked
             FROM users u
             INNER JOIN foodposts fp ON fp.userId = u.userId
             LEFT JOIN likeditems li ON li.foodId = fp.foodId
-            LEFT JOIN comments comment ON comment.foodId = fp.foodId
+            LEFT JOIN comments c ON c.foodId = fp.foodId
             WHERE fp.userId = ${userId}
-            GROUP BY fp.foodId
-            ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`)
+            GROUP BY fp.foodId, u.userId, li.likesId, c.commentId
+            ORDER BY fp.createdAt DESC LIMIT ${limit} OFFSET ${offset}`
+        return db.execute(query)
     }
 };
