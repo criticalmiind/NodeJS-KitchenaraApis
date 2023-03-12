@@ -79,7 +79,7 @@ module.exports = class Users {
 
     fetchALlVideos(userId = '', limit = 10, offset = 0) {
         let query = `
-            SELECT u.*, fp.*, 
+            SELECT DISTINCT fp.*, u.*, 
                 COUNT(li.likesId) AS likes, 
                 (SELECT COUNT(*) FROM comments cl WHERE cl.foodId = fp.foodId) AS comments, 
                 CASE WHEN li.userId = '${userId}' THEN true ELSE false END AS isLiked
@@ -94,7 +94,7 @@ module.exports = class Users {
 
     fetchUserVideos(sessionUserId='', userId, limit = 10, offset = 0) {
         let query = `
-            SELECT DISTINCT u.*, fp.*, 
+            SELECT DISTINCT fp.*, u.*, 
                 COUNT(li.likesId) AS likes, 
                 (SELECT COUNT(*) FROM comments cl WHERE cl.foodId = fp.foodId) AS comments, 
                 CASE WHEN li.userId = '${sessionUserId}' THEN true ELSE false END AS isLiked
