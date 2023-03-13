@@ -23,7 +23,7 @@ module.exports = class Users {
         return db.execute(`INSERT INTO users SET username = '${username}', fullName = '${fullName ? fullName : username}', email = '${email}', phoneNumber = '${phoneNumber}', profilePic = '${profilePic}', password = '${password}', otp = ${otp}, userType = '${userType ? userType : 'user'}', status=${status}`);
     }
 
-    updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location, storeAddress, userAddresses }, userId) {
+    updateProfile({ fullName, email, phoneNumber, password, profilePic, bio, location, storeAddress, userAddresses, userType }, userId) {
         let query = `UPDATE users SET `;
         // if (email) query += `email='${email}', `
         if (fullName) query += `fullName='${fullName}', `
@@ -33,8 +33,8 @@ module.exports = class Users {
         if (location) query += `location='${location}', `
         if (storeAddress) query += `storeAddress='${storeAddress}', `
         if (userAddresses) query += `userAddresses='${JSON.stringify(userAddresses)}', `
+        if (userType) query += `userType='${userType}', `
         query += `status=1 WHERE userId=${userId}`
-        console.log(query)
         return db.execute(query);
     }
 
